@@ -25,7 +25,7 @@ public class RESTServer extends AbstractVerticle {
 
     @Override
     public void stop() {
-        vertx.close();
+        // FIXME
     }
 
 }
