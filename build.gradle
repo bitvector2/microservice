@@ -1,0 +1,20 @@
+plugins {
+    id "application"
+    id "com.github.johnrengelman.shadow" version "1.2.1"
+}
+
+group = "org.bitvector"
+version = "1.0-SNAPSHOT"
+mainClassName = "org.bitvector.test.Main"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "io.vertx:vertx-core:3.0.0"
+    compile "io.vertx:vertx-web:3.0.0"
+    compile "io.vertx:vertx-mysql-postgresql-client:3.0.0-milestone6"
+    compile "ch.qos.logback:logback-classic:1.1.3"
+}
+
