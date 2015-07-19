@@ -8,7 +8,7 @@ public class RESTServer extends AbstractVerticle {
 
     @Override
     public void start() {
-        Product myStuff = new Product(vertx);
+        Product myStuff = new Product();
 
         Router router = Router.router(vertx);
 
