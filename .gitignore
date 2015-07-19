@@ -1,3 +1,5 @@
 .gradle
-file-uploads
 .idea
+file-uploads
+build
+*.iml
