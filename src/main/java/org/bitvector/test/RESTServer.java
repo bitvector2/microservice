@@ -2,6 +2,8 @@ package org.bitvector.test;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.policies.ConstantReconnectionPolicy;
+import com.datastax.driver.core.policies.DowngradingConsistencyRetryPolicy;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -17,16 +19,18 @@ public class RESTServer extends AbstractVerticle {
     public void start() {
         logger = LoggerFactory.getLogger("org.bitvector.test.RESTServer");//
 
-        // Connect to Database
+        // Start Database
         vertx.executeBlocking(future -> {
             cluster = Cluster.builder()
                     .addContactPoint(System.getProperty("org.bitvector.test.db-node"))
+                    .withRetryPolicy(DowngradingConsistencyRetryPolicy.INSTANCE)
+                    .withReconnectionPolicy(new ConstantReconnectionPolicy(100L))
                     .build();
             session = cluster.connect();
             future.complete();
         }, res -> {
             if (res.failed()) {
-                logger.error("Shit Broke!");
+                logger.error("Failed to connect to Cassandra...");
             }
         });
 
