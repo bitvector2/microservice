@@ -40,8 +40,6 @@ public class RESTServer extends AbstractVerticle {
         // Start HTTP Router
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
-        router.get("/products/:productID").handler(productColl::handleGetProduct);
-        router.put("/products/:productID").handler(productColl::handleAddProduct);
         router.get("/products").handler(productColl::handleListProducts);
 
         // Start HTTP Listener

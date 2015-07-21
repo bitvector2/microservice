@@ -2,17 +2,13 @@ package org.bitvector.test;
 
 
 import com.datastax.driver.core.Session;
-import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 
 public class Product {
-    private static HashMap<String, JsonObject> products = new HashMap<>();
     private Logger logger;
     private Session session;
 
@@ -20,54 +16,23 @@ public class Product {
         logger = LoggerFactory.getLogger("org.bitvector.test.Product");
         session = s;
 
-        addProduct(new JsonObject().put("id", "prod3568").put("name", "Egg Whisk").put("price", 3.99).put("weight", 150));
-        addProduct(new JsonObject().put("id", "prod7340").put("name", "Tea Cosy").put("price", 5.99).put("weight", 100));
-        addProduct(new JsonObject().put("id", "prod8643").put("name", "Spatula").put("price", 1.00).put("weight", 80));
-    }
+        /*
+        CQLSH Prereqs:
 
-    private void addProduct(JsonObject product) {
-        products.put(product.getString("id"), product);
-    }
+        CREATE KEYSPACE IF NOT EXISTS test WITH replication = {'class':'SimpleStrategy', 'replication_factor':1};
+        CREATE TABLE IF NOT EXISTS test.product ( id text, name text, price double, weight float, PRIMARY KEY (id, name, price, weight) );
+        INSERT INTO test.product (id, name, price, weight) VALUES ('one', 'La Petite Tonkinoise', 99.99, 1.0);
+        INSERT INTO test.product (id, name, price, weight) VALUES ('two', 'Bye Bye Blackbird', 9.99, 2.0);
+         */
 
-    public void handleGetProduct(RoutingContext routingContext) {
-        String productID = routingContext.request().getParam("productID");
-        HttpServerResponse response = routingContext.response();
-        if (productID == null) {
-            sendError(400, response);
-        } else {
-            JsonObject product = products.get(productID);
-            if (product == null) {
-                sendError(404, response);
-            } else {
-                response.putHeader("content-type", "application/json").end(product.encodePrettily());
-            }
-        }
-    }
-
-    public void handleAddProduct(RoutingContext routingContext) {
-        String productID = routingContext.request().getParam("productID");
-        HttpServerResponse response = routingContext.response();
-        if (productID == null) {
-            sendError(400, response);
-        } else {
-            JsonObject product = routingContext.getBodyAsJson();
-            if (product == null) {
-                sendError(400, response);
-            } else {
-                products.put(productID, product);
-                response.end();
-            }
-        }
     }
 
     public void handleListProducts(RoutingContext routingContext) {
-        JsonArray arr = new JsonArray();
-        products.forEach((k, v) -> arr.add(v));
-        routingContext.response().putHeader("content-type", "application/json").end(arr.encodePrettily());
-    }
 
-    private void sendError(int statusCode, HttpServerResponse response) {
-        response.setStatusCode(statusCode).end();
+        JsonArray arr = new JsonArray();
+        arr.add("test");
+
+        routingContext.response().putHeader("content-type", "application/json").end(arr.encodePrettily());
     }
 
 }
