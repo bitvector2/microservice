@@ -27,7 +27,7 @@ public class Product {
 
     }
 
-    public void handleListProduct(RoutingContext routingContext) {
+    public void handleListProducts(RoutingContext routingContext) {
 
         JsonArray arr = new JsonArray();
         arr.add("test");
