@@ -1,17 +1,25 @@
 package org.bitvector.test;
 
+
+import com.datastax.driver.core.Session;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
 public class Product {
+    private static HashMap<String, JsonObject> products = new HashMap<>();
+    private Logger logger;
+    private Session session;
 
-    private final HashMap<String, JsonObject> products = new HashMap<>();
+    public Product(Session s) {
+        logger = LoggerFactory.getLogger("org.bitvector.test.Product");
+        session = s;
 
-    public Product() {
         addProduct(new JsonObject().put("id", "prod3568").put("name", "Egg Whisk").put("price", 3.99).put("weight", 150));
         addProduct(new JsonObject().put("id", "prod7340").put("name", "Tea Cosy").put("price", 5.99).put("weight", 100));
         addProduct(new JsonObject().put("id", "prod8643").put("name", "Spatula").put("price", 1.00).put("weight", 80));

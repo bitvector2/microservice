@@ -21,15 +21,15 @@ public class Main {
 
         // Start logging
         Logger logger = LoggerFactory.getLogger("org.bitvector.test.Main");
-        logger.info("Starting up...");
+        logger.info("Starting Init...");
 
         // Start application
         Integer threadCount = Integer.parseInt(System.getProperty("org.bitvector.test.thread-count"));
         Vertx vertx = Vertx.vertx();
         DeploymentOptions options = new DeploymentOptions().setInstances(threadCount);
         vertx.deployVerticle("org.bitvector.test.RESTServer", options);
-        vertx.deployVerticle("org.bitvector.test.DBServer", options);
+
+        logger.info("Finished Init...");
 
     }
-
 }
