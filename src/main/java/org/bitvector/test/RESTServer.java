@@ -19,8 +19,8 @@ public class RESTServer extends AbstractVerticle {
     public void start() {
         logger = LoggerFactory.getLogger("org.bitvector.test.RESTServer");//
 
-        // Start Database
         vertx.executeBlocking(future -> {
+            // Start Database
             cluster = Cluster.builder()
                     .addContactPoint(System.getProperty("org.bitvector.test.db-node"))
                     .withRetryPolicy(DowngradingConsistencyRetryPolicy.INSTANCE)
@@ -29,27 +29,24 @@ public class RESTServer extends AbstractVerticle {
             session = cluster.connect();
             future.complete();
         }, res -> {
-            if (res.failed()) {
-                logger.error("Failed to connect to Cassandra...");
+            if (res.succeeded()) {
+                // Start REST Collection
+                Product productColl = new Product(session);
+
+                // Start HTTP Router
+                Router router = Router.router(vertx);
+                router.route().handler(BodyHandler.create());
+                router.get("/products").handler(productColl::handleListProducts);
+
+                // Start HTTP Listener
+                vertx.createHttpServer().requestHandler(router::accept).listen(
+                        Integer.parseInt(System.getProperty("org.bitvector.test.listen-port")),
+                        System.getProperty("org.bitvector.test.listen-address")
+                );
+
+                logger.info("Started a RESTServer...");
             }
         });
-
-
-        // Start REST Collection
-        Product productColl = new Product(session);
-
-        // Start HTTP Router
-        Router router = Router.router(vertx);
-        router.route().handler(BodyHandler.create());
-        router.get("/products").handler(productColl::handleListProducts);
-
-        // Start HTTP Listener
-        vertx.createHttpServer().requestHandler(router::accept).listen(
-                Integer.parseInt(System.getProperty("org.bitvector.test.listen-port")),
-                System.getProperty("org.bitvector.test.listen-address")
-        );
-
-        logger.info("Started a RESTServer...");
     }
 
     @Override

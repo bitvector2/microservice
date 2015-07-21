@@ -1,6 +1,8 @@
 package org.bitvector.test;
 
 
+import com.datastax.driver.core.ResultSetFuture;
+import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
@@ -28,9 +30,13 @@ public class Product {
     }
 
     public void handleListProducts(RoutingContext routingContext) {
-
         JsonArray arr = new JsonArray();
-        arr.add("test");
+
+        ResultSetFuture future = session.executeAsync("SELECT * FROM test.product;");
+
+        for (Row row : future.getUninterruptibly()) {
+            arr.add(row.toString());
+        }
 
         routingContext.response().putHeader("content-type", "application/json").end(arr.encodePrettily());
     }
