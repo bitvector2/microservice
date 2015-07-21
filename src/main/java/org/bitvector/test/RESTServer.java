@@ -11,9 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RESTServer extends AbstractVerticle {
+    public Cluster cluster;
+    public Session session;
     private Logger logger;
-    private Cluster cluster;
-    private Session session;
 
     @Override
     public void start() {
@@ -33,6 +33,7 @@ public class RESTServer extends AbstractVerticle {
                 logger.error("Failed to connect to Cassandra...");
             }
         });
+
 
         // Start REST Collection
         Product productColl = new Product(session);
