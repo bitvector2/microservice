@@ -3,6 +3,7 @@ package org.bitvector.microservice_test;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
 import io.vertx.core.json.JsonArray;
@@ -43,12 +44,45 @@ public class Product {
         try {
             arr = Utility.resultSet2JsonArray(data);
         } catch (Exception e) {
-            logger.error("Utility died", e);
+            logger.error("Utility.resultSet2JsonArray failed...", e);
         }
 
         if (arr != null) {
             routingContext.response().putHeader("content-type", "application/json").end(arr.encodePrettily());
         }
+    }
+
+    public void handleGetProduct(RoutingContext routingContext) {
+        String productID = routingContext.request().getParam("productID");
+
+        Statement query = QueryBuilder
+                .select()
+                .all()
+                .from("test", "product")
+                .where(QueryBuilder.eq("id", productID));
+
+        ResultSetFuture future = session.executeAsync(query);
+        ResultSet data = future.getUninterruptibly();
+
+        JsonArray arr = null;
+        try {
+            arr = Utility.resultSet2JsonArray(data);
+        } catch (Exception e) {
+            logger.error("Utility.resultSet2JsonArray failed...", e);
+        }
+
+        if (arr != null) {
+            routingContext.response().putHeader("content-type", "application/json").end(arr.encodePrettily());
+        }
+    }
+
+    public void handlePostProduct(RoutingContext routingContext) {
+        // This is just and echo route for testing right now
+
+        String body = routingContext.getBodyAsString();
+        JsonArray products = new JsonArray(body);
+
+        routingContext.response().putHeader("content-type", "application/json").end(products.encodePrettily());
     }
 
 }

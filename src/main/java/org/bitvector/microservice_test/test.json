@@ -1,0 +1,14 @@
+[
+  {
+    "id": "three",
+    "name": "Die Antwoord",
+    "price": 999.99,
+    "weight": 1.0
+  },
+  {
+    "id": "four",
+    "name": "Metallica",
+    "price": 9.99,
+    "weight": 100.0
+  }
+]
