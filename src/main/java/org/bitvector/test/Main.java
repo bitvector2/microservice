@@ -1,4 +1,4 @@
-package org.bitvector.test;
+package org.bitvector.microservice_test;
 
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         // Load settings
-        String propFile = System.getProperty("user.dir") + System.getProperty("file.separator") + "microservice-test.properties";
+        String propFile = System.getProperty("user.dir") + System.getProperty("file.separator") + "microservice_test.properties";
         FileInputStream propStream = new FileInputStream(propFile);
         Properties props = new Properties(System.getProperties());
         props.load(propStream);
@@ -20,14 +20,14 @@ public class Main {
         propStream.close();
 
         // Start logging
-        Logger logger = LoggerFactory.getLogger("org.bitvector.test.Main");
+        Logger logger = LoggerFactory.getLogger("org.bitvector.microservice_test.Main");
         logger.info("Starting Init...");
 
         // Start application
-        Integer threadCount = Integer.parseInt(System.getProperty("org.bitvector.test.thread-count"));
+        Integer threadCount = Integer.parseInt(System.getProperty("org.bitvector.microservice_test.thread-count"));
         Vertx vertx = Vertx.vertx();
         DeploymentOptions options = new DeploymentOptions().setInstances(threadCount);
-        vertx.deployVerticle("org.bitvector.test.RESTServer", options);
+        vertx.deployVerticle("org.bitvector.microservice_test.RESTServer", options);
 
         logger.info("Finished Init...");
 
