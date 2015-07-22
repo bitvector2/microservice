@@ -5,7 +5,7 @@ plugins {
 
 group = "org.bitvector"
 version = "1.0-SNAPSHOT"
-mainClassName = "org.bitvector.test.Main"
+mainClassName = "org.bitvector.microservice_test.Main"
 
 repositories {
     mavenCentral()
