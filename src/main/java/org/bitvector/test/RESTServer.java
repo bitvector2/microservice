@@ -1,4 +1,4 @@
-package org.bitvector.test;
+package org.bitvector.microservice_test;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
@@ -17,12 +17,12 @@ public class RESTServer extends AbstractVerticle {
 
     @Override
     public void start() {
-        logger = LoggerFactory.getLogger("org.bitvector.test.RESTServer");//
+        logger = LoggerFactory.getLogger("org.bitvector.microservice_test.RESTServer");//
 
         vertx.executeBlocking(future -> {
             // Start Database
             cluster = Cluster.builder()
-                    .addContactPoint(System.getProperty("org.bitvector.test.db-node"))
+                    .addContactPoint(System.getProperty("org.bitvector.microservice_test.db-node"))
                     .withRetryPolicy(DowngradingConsistencyRetryPolicy.INSTANCE)
                     .withReconnectionPolicy(new ConstantReconnectionPolicy(100L))
                     .build();
@@ -40,8 +40,8 @@ public class RESTServer extends AbstractVerticle {
 
                 // Start HTTP Listener
                 vertx.createHttpServer().requestHandler(router::accept).listen(
-                        Integer.parseInt(System.getProperty("org.bitvector.test.listen-port")),
-                        System.getProperty("org.bitvector.test.listen-address")
+                        Integer.parseInt(System.getProperty("org.bitvector.microservice_test.listen-port")),
+                        System.getProperty("org.bitvector.microservice_test.listen-address")
                 );
 
                 logger.info("Started a RESTServer...");
