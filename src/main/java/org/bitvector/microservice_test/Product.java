@@ -1,9 +1,10 @@
 package org.bitvector.microservice_test;
 
-
+import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
-import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.core.querybuilder.Select;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ public class Product {
         session = s;
 
         /*
-        CQLSH Prereqs:
+        CQLSH prerequisites:
 
         CREATE KEYSPACE IF NOT EXISTS test WITH replication = {'class':'SimpleStrategy', 'replication_factor':1};
         CREATE TABLE IF NOT EXISTS test.product ( id text, name text, price double, weight float, PRIMARY KEY (id, name, price, weight) );
@@ -30,15 +31,24 @@ public class Product {
     }
 
     public void handleListProducts(RoutingContext routingContext) {
-        JsonArray arr = new JsonArray();
+        Select query = QueryBuilder
+                .select()
+                .all()
+                .from("test", "product");
 
-        ResultSetFuture future = session.executeAsync("SELECT * FROM test.product;");
+        ResultSetFuture future = session.executeAsync(query);
+        ResultSet data = future.getUninterruptibly();
 
-        for (Row row : future.getUninterruptibly()) {
-            arr.add(row.toString());
+        JsonArray arr = null;
+        try {
+            arr = Utility.resultSet2JsonArray(data);
+        } catch (Exception e) {
+            logger.error("Utility died", e);
         }
 
-        routingContext.response().putHeader("content-type", "application/json").end(arr.encodePrettily());
+        if (arr != null) {
+            routingContext.response().putHeader("content-type", "application/json").end(arr.encodePrettily());
+        }
     }
 
 }

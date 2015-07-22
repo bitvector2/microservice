@@ -21,8 +21,9 @@ public class RESTServer extends AbstractVerticle {
 
         vertx.executeBlocking(future -> {
             // Start Database
+            String[] nodes = System.getProperty("org.bitvector.microservice_test.db-nodes").split(",");
             cluster = Cluster.builder()
-                    .addContactPoint(System.getProperty("org.bitvector.microservice_test.db-node"))
+                    .addContactPoints(nodes)
                     .withRetryPolicy(DowngradingConsistencyRetryPolicy.INSTANCE)
                     .withReconnectionPolicy(new ConstantReconnectionPolicy(100L))
                     .build();
