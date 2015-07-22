@@ -1,4 +1,4 @@
-package org.bitvector.test;
+package org.bitvector.microservice_test;
 
 
 import com.datastax.driver.core.ResultSetFuture;
@@ -15,7 +15,7 @@ public class Product {
     private Session session;
 
     public Product(Session s) {
-        logger = LoggerFactory.getLogger("org.bitvector.test.Product");
+        logger = LoggerFactory.getLogger("org.bitvector.microservice_test.Product");
         session = s;
 
         /*
