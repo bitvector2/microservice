@@ -64,23 +64,29 @@ public class Product {
         ResultSetFuture future = session.executeAsync(query);
         ResultSet data = future.getUninterruptibly();
 
-        JsonArray arr = null;
+        JsonArray products = null;
         try {
-            arr = Utility.resultSet2JsonArray(data);
+            products = Utility.resultSet2JsonArray(data);
         } catch (Exception e) {
             logger.error("Utility.resultSet2JsonArray failed...", e);
         }
 
-        if (arr != null) {
-            routingContext.response().putHeader("content-type", "application/json").end(arr.encodePrettily());
+        if (products != null) {
+            routingContext.response().putHeader("content-type", "application/json").end(products.encodePrettily());
         }
     }
 
     public void handlePostProduct(RoutingContext routingContext) {
-        // This is just and echo route for testing right now
+        // This is just an echo route for testing right now
 
         String body = routingContext.getBodyAsString();
         JsonArray products = new JsonArray(body);
+
+        /*
+        Statement query = QueryBuilder
+                .insertInto("test", "product")
+                .values(names, values);
+        */
 
         routingContext.response().putHeader("content-type", "application/json").end(products.encodePrettily());
     }
