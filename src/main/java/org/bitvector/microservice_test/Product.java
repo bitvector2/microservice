@@ -1,94 +1,79 @@
 package org.bitvector.microservice_test;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.ResultSetFuture;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select;
-import io.vertx.core.json.JsonArray;
-import io.vertx.ext.web.RoutingContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
+import com.google.common.base.Objects;
 
-
+@Table(keyspace = "test", name = "product")
 public class Product {
-    private Logger logger;
-    private Session session;
 
-    public Product(Session s) {
-        logger = LoggerFactory.getLogger("org.bitvector.microservice_test.Product");
-        session = s;
+    /*
+    CQLSH prerequisites:
 
-        /*
-        CQLSH prerequisites:
+    CREATE KEYSPACE IF NOT EXISTS test WITH replication = {'class':'SimpleStrategy', 'replication_factor':1};
+    CREATE TABLE IF NOT EXISTS test.product ( id text, name text, price double, weight float, PRIMARY KEY (id, name, price, weight) );
+    INSERT INTO test.product (id, name, price, weight) VALUES ('one', 'La Petite Tonkinoise', 99.99, 1.0);
+    INSERT INTO test.product (id, name, price, weight) VALUES ('two', 'Bye Bye Blackbird', 9.99, 2.0);
+     */
 
-        CREATE KEYSPACE IF NOT EXISTS test WITH replication = {'class':'SimpleStrategy', 'replication_factor':1};
-        CREATE TABLE IF NOT EXISTS test.product ( id text, name text, price double, weight float, PRIMARY KEY (id, name, price, weight) );
-        INSERT INTO test.product (id, name, price, weight) VALUES ('one', 'La Petite Tonkinoise', 99.99, 1.0);
-        INSERT INTO test.product (id, name, price, weight) VALUES ('two', 'Bye Bye Blackbird', 9.99, 2.0);
-         */
+    @PartitionKey
+    private String id;
+    @PartitionKey
+    private String name;
+    @PartitionKey
+    private Double price;
+    @PartitionKey
+    private Float weight;
 
+    public Product() {
     }
 
-    public void handleListProducts(RoutingContext routingContext) {
-        Select query = QueryBuilder
-                .select()
-                .all()
-                .from("test", "product");
-
-        ResultSetFuture future = session.executeAsync(query);
-        ResultSet data = future.getUninterruptibly();
-
-        JsonArray arr = null;
-        try {
-            arr = Utility.resultSet2JsonArray(data);
-        } catch (Exception e) {
-            logger.error("Utility.resultSet2JsonArray failed...", e);
-        }
-
-        if (arr != null) {
-            routingContext.response().putHeader("content-type", "application/json").end(arr.encodePrettily());
-        }
+    public String getId() {
+        return id;
     }
 
-    public void handleGetProduct(RoutingContext routingContext) {
-        String productID = routingContext.request().getParam("productID");
-
-        Statement query = QueryBuilder
-                .select()
-                .all()
-                .from("test", "product")
-                .where(QueryBuilder.eq("id", productID));
-
-        ResultSetFuture future = session.executeAsync(query);
-        ResultSet data = future.getUninterruptibly();
-
-        JsonArray products = null;
-        try {
-            products = Utility.resultSet2JsonArray(data);
-        } catch (Exception e) {
-            logger.error("Utility.resultSet2JsonArray failed...", e);
-        }
-
-        if (products != null) {
-            routingContext.response().putHeader("content-type", "application/json").end(products.encodePrettily());
-        }
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void handlePostProduct(RoutingContext routingContext) {
-        // This is just an echo route for testing right now
-
-        String body = routingContext.getBodyAsString();
-        JsonArray products = new JsonArray(body);
-
-        /*
-        Statement query = QueryBuilder
-                .insertInto("test", "product")
-                .values(names, values);
-        */
-
-        routingContext.response().putHeader("content-type", "application/json").end(products.encodePrettily());
+    public String getName() {
+        return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Float getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Float weight) {
+        this.weight = weight;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof Product) {
+            Product that = (Product) other;
+            return Objects.equal(this.id, that.id) &&
+                    Objects.equal(this.name, that.name) &&
+                    Objects.equal(this.price, that.price) &&
+                    Objects.equal(this.weight, that.weight);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, name, price, weight);
+    }
 }

@@ -10,6 +10,7 @@ import io.vertx.ext.web.handler.BodyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class RESTServer extends AbstractVerticle {
     public Cluster cluster;
     public Session session;
@@ -31,15 +32,15 @@ public class RESTServer extends AbstractVerticle {
             future.complete();
         }, res -> {
             if (res.succeeded()) {
-                // Start REST Collection
-                Product productColl = new Product(session);
+                // Start Controllers
+                ProductCtrl productCtrl = new ProductCtrl(session);
 
                 // Start HTTP Router
                 Router router = Router.router(vertx);
                 router.route().handler(BodyHandler.create());
-                router.get("/products").handler(productColl::handleListProducts);
-                router.get("/products/:productID").handler(productColl::handleGetProduct);
-                router.post("/products").handler(productColl::handlePostProduct);
+                router.get("/products").handler(productCtrl::handleListProducts);
+                router.get("/products/:productID").handler(productCtrl::handleGetProduct);
+                router.post("/products").handler(productCtrl::handlePostProduct);
 
                 // Start HTTP Listener
                 vertx.createHttpServer().requestHandler(router::accept).listen(

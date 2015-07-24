@@ -7,8 +7,6 @@ import com.datastax.driver.core.Row;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-import java.util.Hashtable;
-import java.util.Map;
 
 public class Utility {
 
@@ -38,19 +36,6 @@ public class Utility {
         }
 
         return json;
-    }
-
-    public static Hashtable<String, Object> jsonArray2InsertValues(JsonArray arr) throws Exception {
-        Hashtable<String, Object> insertValues = new Hashtable<String, Object>();
-        JsonObject element = new JsonObject();
-
-        for (int i = 0; i < arr.size(); i++) {
-            element = arr.getJsonObject(i);
-            element.fieldNames();
-        }
-
-
-        return insertValues;
     }
 
 }
