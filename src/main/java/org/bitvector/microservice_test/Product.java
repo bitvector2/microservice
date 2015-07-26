@@ -2,7 +2,9 @@ package org.bitvector.microservice_test;
 
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
-import com.google.common.base.Objects;
+
+import java.util.Objects;
+
 
 @Table(keyspace = "test", name = "product")
 public class Product {
@@ -16,13 +18,13 @@ public class Product {
     INSERT INTO test.product (id, name, price, weight) VALUES ('two', 'Bye Bye Blackbird', 9.99, 2.0);
      */
 
-    @PartitionKey
+    @PartitionKey(value = 0)
     private String id;
-    @PartitionKey
+    @PartitionKey(value = 1)
     private String name;
-    @PartitionKey
+    @PartitionKey(value = 2)
     private Double price;
-    @PartitionKey
+    @PartitionKey(value = 3)
     private Float weight;
 
     public Product() {
@@ -64,16 +66,24 @@ public class Product {
     public boolean equals(Object other) {
         if (other instanceof Product) {
             Product that = (Product) other;
-            return Objects.equal(this.id, that.id) &&
-                    Objects.equal(this.name, that.name) &&
-                    Objects.equal(this.price, that.price) &&
-                    Objects.equal(this.weight, that.weight);
+            return Objects.equals(this.id, that.id) &&
+                    Objects.equals(this.name, that.name) &&
+                    Objects.equals(this.price, that.price) &&
+                    Objects.equals(this.weight, that.weight);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, name, price, weight);
+        return Objects.hashCode(this.id) +
+                Objects.hashCode(this.name) +
+                Objects.hashCode(this.price) +
+                Objects.hashCode(this.weight);
+    }
+
+    public String toJson() {
+        return String.format("{\"id\":\"%s\",\"name\":\"%s\",\"price\":%f,\"weight\":%f}", id, name, price, weight);
     }
 }
+

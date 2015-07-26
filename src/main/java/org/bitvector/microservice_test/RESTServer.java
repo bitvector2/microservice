@@ -33,14 +33,14 @@ public class RESTServer extends AbstractVerticle {
         }, res -> {
             if (res.succeeded()) {
                 // Start Controllers
-                ProductCtrl productCtrl = new ProductCtrl(session);
+                ProductController productController = new ProductController(session);
 
                 // Start HTTP Router
                 Router router = Router.router(vertx);
                 router.route().handler(BodyHandler.create());
-                router.get("/products").handler(productCtrl::handleListProducts);
-                router.get("/products/:productID").handler(productCtrl::handleGetProduct);
-                router.post("/products").handler(productCtrl::handlePostProduct);
+                router.get("/products").handler(productController::handleListProducts);
+                router.get("/products/:productID").handler(productController::handleGetProduct);
+                router.post("/products").handler(productController::handlePostProduct);
 
                 // Start HTTP Listener
                 vertx.createHttpServer().requestHandler(router::accept).listen(
