@@ -27,17 +27,17 @@ public class ProductController {
     public void handleListProducts(RoutingContext routingContext) {
         ListenableFuture<Result<Product>> future = productAccessor.getAllAsync();
 
-        Result<Product> data = null;
+        Result<Product> objs = null;
         try {
-            data = future.get();
+            objs = future.get();
         } catch (Exception e) {
             logger.error("Failed to get Products from DB.", e);
         }
 
         JsonArray products = new JsonArray();
-        if (data != null) {
-            for (Product product : data.all()) {
-                JsonObject jsonObj = new JsonObject(product.toJson());
+        if (objs != null) {
+            for (Product obj : objs.all()) {
+                JsonObject jsonObj = new JsonObject(obj.toJson());
                 products.add(jsonObj);
             }
         }
@@ -46,9 +46,22 @@ public class ProductController {
     }
 
     public void handleGetProduct(RoutingContext routingContext) {
-        String productID = routingContext.request().getParam("productID");
+        ListenableFuture<Product> future = productMapper.getAsync(routingContext.request().getParam("productID"));
 
-        // FIXME
+        Product obj = null;
+        try {
+            obj = future.get();
+        } catch (Exception e) {
+            logger.error("Failed to get a Product from DB.", e);
+        }
+
+        JsonArray products = new JsonArray();
+        if (obj != null) {
+            JsonObject jsonObj = new JsonObject(obj.toJson());
+            products.add(jsonObj);
+        }
+
+        routingContext.response().putHeader("content-type", "application/json").end(products.encodePrettily());
     }
 
     public void handlePostProduct(RoutingContext routingContext) {

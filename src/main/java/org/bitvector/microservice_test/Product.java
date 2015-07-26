@@ -6,25 +6,22 @@ import com.datastax.driver.mapping.annotations.Table;
 import java.util.Objects;
 
 
-@Table(keyspace = "test", name = "product")
+@Table(keyspace = "microservice_test", name = "products")
 public class Product {
 
     /*
     CQLSH prerequisites:
 
-    CREATE KEYSPACE IF NOT EXISTS test WITH replication = {'class':'SimpleStrategy', 'replication_factor':1};
-    CREATE TABLE IF NOT EXISTS test.product ( id text, name text, price double, weight float, PRIMARY KEY (id, name, price, weight) );
-    INSERT INTO test.product (id, name, price, weight) VALUES ('one', 'La Petite Tonkinoise', 99.99, 1.0);
-    INSERT INTO test.product (id, name, price, weight) VALUES ('two', 'Bye Bye Blackbird', 9.99, 2.0);
+    CREATE KEYSPACE IF NOT EXISTS microservice_test WITH replication = {'class':'SimpleStrategy', 'replication_factor':1};
+    CREATE TABLE IF NOT EXISTS microservice_test.products ( id text, name text, price double, weight float, PRIMARY KEY (id) );
+    INSERT INTO microservice_test.products (id, name, price, weight) VALUES ('one', 'La Petite Tonkinoise', 99.99, 1.0);
+    INSERT INTO microservice_test.products (id, name, price, weight) VALUES ('two', 'Bye Bye Blackbird', 9.99, 2.0);
      */
 
     @PartitionKey(value = 0)
     private String id;
-    @PartitionKey(value = 1)
     private String name;
-    @PartitionKey(value = 2)
     private Double price;
-    @PartitionKey(value = 3)
     private Float weight;
 
     public Product() {
