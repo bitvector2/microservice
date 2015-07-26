@@ -27,6 +27,13 @@ public class Product {
     public Product() {
     }
 
+    public Product(String id, String name, Double price, Float weight) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.weight = weight;
+    }
+
     public String getId() {
         return id;
     }

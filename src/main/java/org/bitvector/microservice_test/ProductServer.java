@@ -11,14 +11,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class RESTServer extends AbstractVerticle {
+public class ProductServer extends AbstractVerticle {
     public Cluster cluster;
     public Session session;
     private Logger logger;
 
     @Override
     public void start() {
-        logger = LoggerFactory.getLogger("org.bitvector.microservice_test.RESTServer");//
+        logger = LoggerFactory.getLogger("org.bitvector.microservice_test.ProductServer");//
 
         vertx.executeBlocking(future -> {
             // Start Database
@@ -30,17 +30,19 @@ public class RESTServer extends AbstractVerticle {
                     .build();
             session = cluster.connect();
             future.complete();
-        }, res -> {
-            if (res.succeeded()) {
-                // Start Controllers
+        }, result -> {
+            if (result.succeeded()) {
+                // Start Controller
                 ProductController productController = new ProductController(session);
 
                 // Start HTTP Router
                 Router router = Router.router(vertx);
                 router.route().handler(BodyHandler.create());
-                router.get("/products").handler(productController::handleListProducts);
-                router.get("/products/:productID").handler(productController::handleGetProduct);
+                router.get("/products").handler(productController::handleGetAllProduct);
+                router.get("/products/:productID").handler(productController::handleGetProductId);
+                router.put("/products/:productID").handler(productController::handlePutProductId);
                 router.post("/products").handler(productController::handlePostProduct);
+                router.delete("/products/:productID").handler(productController::handleDeleteProductId);
 
                 // Start HTTP Listener
                 vertx.createHttpServer().requestHandler(router::accept).listen(
@@ -48,7 +50,7 @@ public class RESTServer extends AbstractVerticle {
                         System.getProperty("org.bitvector.microservice_test.listen-address")
                 );
 
-                logger.info("Started a RESTServer...");
+                logger.info("Started a ProductServer...");
             }
         });
     }
@@ -57,7 +59,7 @@ public class RESTServer extends AbstractVerticle {
     public void stop() {
         session.closeAsync();
         cluster.closeAsync();
-        logger.info("Stopped a RESTServer...");
+        logger.info("Stopped a ProductServer...");
     }
 
 }
