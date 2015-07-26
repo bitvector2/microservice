@@ -7,7 +7,7 @@ import java.util.Objects;
 
 
 @Table(keyspace = "microservice_test", name = "products")
-public class Product {
+public class ProductModel {
 
     /*
     CQLSH prerequisites:
@@ -24,10 +24,10 @@ public class Product {
     private Double price;
     private Float weight;
 
-    public Product() {
+    public ProductModel() {
     }
 
-    public Product(String id, String name, Double price, Float weight) {
+    public ProductModel(String id, String name, Double price, Float weight) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -68,8 +68,8 @@ public class Product {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof Product) {
-            Product that = (Product) other;
+        if (other instanceof ProductModel) {
+            ProductModel that = (ProductModel) other;
             return Objects.equals(this.id, that.id) &&
                     Objects.equals(this.name, that.name) &&
                     Objects.equals(this.price, that.price) &&
