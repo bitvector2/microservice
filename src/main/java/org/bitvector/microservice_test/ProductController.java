@@ -37,7 +37,9 @@ public class ProductController {
 
         String products = null;
         try {
-            products = jsonMapper.writeValueAsString(objs.all());
+            if (objs != null) {
+                products = jsonMapper.writeValueAsString(objs.all());
+            }
         } catch (Exception e) {
             logger.error("Failed to map Products to JSON.", e);
         }
