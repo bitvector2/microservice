@@ -7,6 +7,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 @Accessor
 public interface ProductAccessor {
+
     @Query("SELECT * FROM microservice_test.products")
     ListenableFuture<Result<Product>> getAllAsync();
+
 }
