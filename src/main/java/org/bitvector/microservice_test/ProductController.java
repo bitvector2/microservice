@@ -26,6 +26,7 @@ public class ProductController {
     }
 
     public void handleHeadProduct(RoutingContext routingContext) {
+        // Route used for benchmarking without database lookup
         Product obj = new Product("asdf", "asdf", 1.0, (float) 1.0);
 
         String product = null;
