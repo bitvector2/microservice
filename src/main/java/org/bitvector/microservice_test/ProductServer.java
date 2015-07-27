@@ -18,7 +18,7 @@ public class ProductServer extends AbstractVerticle {
 
     @Override
     public void start() {
-        logger = LoggerFactory.getLogger("org.bitvector.microservice_test.ProductServer");//
+        logger = LoggerFactory.getLogger("org.bitvector.microservice_test.ProductServer");
 
         vertx.executeBlocking(future -> {
             // Start Database
@@ -38,6 +38,7 @@ public class ProductServer extends AbstractVerticle {
                 // Start HTTP Router
                 Router router = Router.router(vertx);
                 router.route().handler(BodyHandler.create());
+                router.head("/products").handler(productController::handleHeadProduct);
                 router.get("/products").handler(productController::handleGetAllProduct);
                 router.get("/products/:productID").handler(productController::handleGetProductId);
                 router.put("/products/:productID").handler(productController::handlePutProductId);

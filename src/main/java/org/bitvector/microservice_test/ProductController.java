@@ -14,21 +14,36 @@ import org.slf4j.LoggerFactory;
 public class ProductController {
     private Logger logger;
     private ProductAccessor productAccessor;
-    private Mapper<ProductModel> productMapper;
+    private Mapper<Product> productMapper;
     private ObjectMapper jsonMapper;
 
     public ProductController(Session s) {
         logger = LoggerFactory.getLogger("org.bitvector.microservice_test.ProductController");
         MappingManager manager = new MappingManager(s);
         productAccessor = manager.createAccessor(ProductAccessor.class);
-        productMapper = manager.mapper(ProductModel.class);
+        productMapper = manager.mapper(Product.class);
         jsonMapper = new ObjectMapper();
     }
 
-    public void handleGetAllProduct(RoutingContext routingContext) {
-        ListenableFuture<Result<ProductModel>> future = productAccessor.getAllAsync();
+    public void handleHeadProduct(RoutingContext routingContext) {
+        Product obj = new Product("asdf", "asdf", 1.0, (float) 1.0);
 
-        Result<ProductModel> objs = null;
+        String product = null;
+        try {
+            product = jsonMapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            logger.error("Failed to map a Product to JSON.", e);
+        }
+
+        routingContext.response()
+                .putHeader("content-type", "application/json")
+                .end(product);
+    }
+
+    public void handleGetAllProduct(RoutingContext routingContext) {
+        ListenableFuture<Result<Product>> future = productAccessor.getAllAsync();
+
+        Result<Product> objs = null;
         try {
             objs = future.get();
         } catch (Exception e) {
@@ -50,20 +65,20 @@ public class ProductController {
     }
 
     public void handleGetProductId(RoutingContext routingContext) {
-        ListenableFuture<ProductModel> future = productMapper.getAsync(routingContext.request().getParam("productID"));
+        ListenableFuture<Product> future = productMapper.getAsync(routingContext.request().getParam("productID"));
 
-        ProductModel obj = null;
+        Product obj = null;
         try {
             obj = future.get();
         } catch (Exception e) {
-            logger.error("Failed to get a ProductModel from DB.", e);
+            logger.error("Failed to get a Product from DB.", e);
         }
 
         String product = null;
         try {
             product = jsonMapper.writeValueAsString(obj);
         } catch (Exception e) {
-            logger.error("Failed to map a ProductModel to JSON.", e);
+            logger.error("Failed to map a Product to JSON.", e);
         }
 
         routingContext.response()
@@ -72,26 +87,26 @@ public class ProductController {
     }
 
     public void handlePutProductId(RoutingContext routingContext) {
-        ListenableFuture<ProductModel> future = productMapper.getAsync(routingContext.request().getParam("productID"));
+        ListenableFuture<Product> future = productMapper.getAsync(routingContext.request().getParam("productID"));
         String body = routingContext.getBodyAsString();
 
-        ProductModel obj = null;
+        Product obj = null;
         try {
             obj = future.get();
         } catch (Exception e) {
-            logger.error("Failed to get a ProductModel from DB before delete", e);
+            logger.error("Failed to get a Product from DB before delete", e);
         }
 
         productMapper.deleteAsync(obj);
 
-        ProductModel productModel = null;
+        Product product = null;
         try {
-            productModel = jsonMapper.readValue(body, ProductModel.class);
+            product = jsonMapper.readValue(body, Product.class);
         } catch (Exception e) {
-            logger.error("Failed to map JSON to a ProductModel");
+            logger.error("Failed to map JSON to a Product");
         }
 
-        productMapper.saveAsync(productModel);
+        productMapper.saveAsync(product);
 
         routingContext.response()
                 .setStatusCode(202)
@@ -101,14 +116,14 @@ public class ProductController {
     public void handlePostProduct(RoutingContext routingContext) {
         String body = routingContext.getBodyAsString();
 
-        ProductModel productModel = null;
+        Product product = null;
         try {
-            productModel = jsonMapper.readValue(body, ProductModel.class);
+            product = jsonMapper.readValue(body, Product.class);
         } catch (Exception e) {
-            logger.error("Failed to map JSON to a ProductModel");
+            logger.error("Failed to map JSON to a Product");
         }
 
-        productMapper.saveAsync(productModel);
+        productMapper.saveAsync(product);
 
         routingContext.response()
                 .setStatusCode(202)
@@ -116,13 +131,13 @@ public class ProductController {
     }
 
     public void handleDeleteProductId(RoutingContext routingContext) {
-        ListenableFuture<ProductModel> future = productMapper.getAsync(routingContext.request().getParam("productID"));
+        ListenableFuture<Product> future = productMapper.getAsync(routingContext.request().getParam("productID"));
 
-        ProductModel obj = null;
+        Product obj = null;
         try {
             obj = future.get();
         } catch (Exception e) {
-            logger.error("Failed to get a ProductModel from DB before delete", e);
+            logger.error("Failed to get a Product from DB before delete", e);
         }
 
         productMapper.deleteAsync(obj);
