@@ -28,6 +28,7 @@ public class Main {
         Integer threadCount = Integer.parseInt(System.getProperty("org.bitvector.microservice_test.thread-count"));
         Vertx vertx = Vertx.vertx();
         DeploymentOptions options = new DeploymentOptions().setInstances(threadCount);
+        vertx.deployVerticle("org.bitvector.microservice_test.DbPersister", options);
         vertx.deployVerticle("org.bitvector.microservice_test.ProductServer", options);
 
         logger.info("Finished Init...");

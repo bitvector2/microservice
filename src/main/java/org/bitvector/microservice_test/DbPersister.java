@@ -12,12 +12,13 @@ public class DbPersister extends AbstractVerticle {
 
     @Override
     public void start() {
-        logger = LoggerFactory.getLogger("org.bitvector.microservice_test.ProductServer");
+        logger = LoggerFactory.getLogger("org.bitvector.microservice_test.DbPersister");
 
         EventBus eb = vertx.eventBus();
-        eb.consumer("org.bitvector.microservice_test.DbPersister", this::onMessage);
+        eb.consumer("DbPersister", this::onMessage);
         DbMessageCodec dbMessageCodec = new DbMessageCodec();
         eb.registerDefaultCodec(DbMessage.class, dbMessageCodec);
+
         logger.info("Started a DbPersister...");
     }
 
@@ -26,7 +27,9 @@ public class DbPersister extends AbstractVerticle {
         logger.info("Stopped a DbPersister...");
     }
 
-    private void onMessage(Message<DbMessage> dbMessage) {
+    private void onMessage(Message<DbMessage> message) {
+        DbMessage dbMessage = message.body();
         logger.info("Received: " + dbMessage.toString());
+        message.reply(new DbMessage(dbMessage.getUuid(), "pong"));
     }
 }

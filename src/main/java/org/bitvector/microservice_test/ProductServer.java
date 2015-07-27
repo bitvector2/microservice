@@ -2,11 +2,8 @@ package org.bitvector.microservice_test;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
-import com.datastax.driver.core.policies.ConstantReconnectionPolicy;
-import com.datastax.driver.core.policies.DowngradingConsistencyRetryPolicy;
 import io.vertx.core.AbstractVerticle;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.core.eventbus.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +17,18 @@ public class ProductServer extends AbstractVerticle {
     public void start() {
         logger = LoggerFactory.getLogger("org.bitvector.microservice_test.ProductServer");
 
+        EventBus eb = vertx.eventBus();
+        DbMessageCodec dbMessageCodec = new DbMessageCodec();
+        eb.registerDefaultCodec(DbMessage.class, dbMessageCodec);
+
+        eb.send("DbPersister", new DbMessage("ping", null), reply -> {
+            if (reply.succeeded()) {
+                DbMessage dbMessage = (DbMessage) reply.result().body();
+                logger.info("Received: " + dbMessage.toString());
+            }
+        });
+
+        /*
         vertx.executeBlocking(future -> {
             // Start Database
             String[] nodes = System.getProperty("org.bitvector.microservice_test.db-nodes").split(",");
@@ -50,10 +59,11 @@ public class ProductServer extends AbstractVerticle {
                         Integer.parseInt(System.getProperty("org.bitvector.microservice_test.listen-port")),
                         System.getProperty("org.bitvector.microservice_test.listen-address")
                 );
-
-                logger.info("Started a ProductServer...");
             }
         });
+        */
+
+        logger.info("Started a ProductServer...");
     }
 
     @Override

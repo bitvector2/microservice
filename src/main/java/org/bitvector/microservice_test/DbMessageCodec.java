@@ -12,7 +12,7 @@ public class DbMessageCodec implements MessageCodec<DbMessage, DbMessage> {
     private ObjectMapper jsonMapper;
 
     public DbMessageCodec() {
-        logger = LoggerFactory.getLogger("org.bitvector.microservice_test.ProductServer");
+        logger = LoggerFactory.getLogger("org.bitvector.microservice_test.DbMessageCodec");
         jsonMapper = new ObjectMapper();
     }
 
@@ -22,7 +22,7 @@ public class DbMessageCodec implements MessageCodec<DbMessage, DbMessage> {
         try {
             bytes = jsonMapper.writeValueAsBytes(dbMessage);
         } catch (Exception e) {
-            logger.error("Failed to convert message to eventbus", e);
+            logger.error("Failed to convert message to wire format", e);
         }
         buffer.setBytes(0, bytes);
     }
@@ -33,7 +33,7 @@ public class DbMessageCodec implements MessageCodec<DbMessage, DbMessage> {
         try {
             dbMessage = jsonMapper.readValue(buffer.getBytes(), DbMessage.class);
         } catch (Exception e) {
-            logger.error("Failed to convert message from eventbus", e);
+            logger.error("Failed to convert message from wire format", e);
         }
         return dbMessage;
     }
