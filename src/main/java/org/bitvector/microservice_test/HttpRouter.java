@@ -1,48 +1,62 @@
 package org.bitvector.microservice_test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
+import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class ProductController {
-    EventBus eb;
+public class HttpRouter extends AbstractVerticle {
     private Logger logger;
-    private ObjectMapper jsonMapper;
+    private EventBus eb;
 
-    public ProductController(EventBus eb) {
-        logger = LoggerFactory.getLogger("org.bitvector.microservice_test.ProductController");
-        this.eb = eb;
+    @Override
+    public void start() {
+        logger = LoggerFactory.getLogger("org.bitvector.microservice_test.HttpRouter");
+        eb = vertx.eventBus();
 
-        DbMessageCodec dbMessageCodec = new DbMessageCodec();
-        eb.registerDefaultCodec(DbMessage.class, dbMessageCodec);
+        // Start HTTP Router
+        Router router = Router.router(vertx);
+        router.route().handler(BodyHandler.create());
+        router.head("/products").handler(this::handleHeadProduct);
+        router.get("/products").handler(this::handleGetAllProduct);
+        router.get("/products/:productID").handler(this::handleGetProductId);
+        router.put("/products/:productID").handler(this::handlePutProductId);
+        router.post("/products").handler(this::handlePostProduct);
+        router.delete("/products/:productID").handler(this::handleDeleteProductId);
 
-        eb.send("DbPersister", new DbMessage("ping", null), reply -> {
-            if (reply.succeeded()) {
-                DbMessage dbMessage = (DbMessage) reply.result().body();
-                logger.info("Received: " + dbMessage.toString());
-            }
-        });
+        // Start HTTP Listener
+        vertx.createHttpServer().requestHandler(router::accept).listen(
+                Integer.parseInt(System.getProperty("org.bitvector.microservice_test.listen-port")),
+                System.getProperty("org.bitvector.microservice_test.listen-address")
+        );
 
-        jsonMapper = new ObjectMapper();
+        logger.info("Started a HttpRouter...");
+    }
+
+    @Override
+    public void stop() {
+        logger.info("Stopped a HttpRouter...");
     }
 
     public void handleHeadProduct(RoutingContext routingContext) {
-        // Route used for benchmarking without database lookup
-        Product obj = new Product("asdf", "asdf", 1.0, (float) 1.0);
 
-        String product = null;
-        try {
-            product = jsonMapper.writeValueAsString(obj);
-        } catch (Exception e) {
-            logger.error("Failed to map a Product to JSON.", e);
-        }
+        DbMessage dbRequest = new DbMessage("ping", null);
+        logger.info("Sending: " + dbRequest.toString());
+        eb.send("DbPersister", dbRequest, reply -> {
+            if (reply.succeeded()) {
+                DbMessage dbResponse = (DbMessage) reply.result().body();
+                logger.info("Received: " + dbResponse.toString());
+            }
+        });
 
         routingContext.response()
-                .putHeader("content-type", "application/json")
-                .end(product);
+                .setStatusCode(200)
+                .end();
+
     }
 
     public void handleGetAllProduct(RoutingContext routingContext) {
@@ -163,3 +177,4 @@ public class ProductController {
     }
 
 }
+

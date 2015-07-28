@@ -27,9 +27,8 @@ public class Main {
         // Start application
         Integer threadCount = Integer.parseInt(System.getProperty("org.bitvector.microservice_test.thread-count"));
         Vertx vertx = Vertx.vertx();
-        DeploymentOptions options = new DeploymentOptions().setInstances(threadCount);
-        vertx.deployVerticle("org.bitvector.microservice_test.DbPersister", options);
-        vertx.deployVerticle("org.bitvector.microservice_test.HttpServer", options);
+        vertx.deployVerticle("org.bitvector.microservice_test.DbPersister", new DeploymentOptions().setWorker(true));
+        vertx.deployVerticle("org.bitvector.microservice_test.HttpRouter", new DeploymentOptions().setInstances(threadCount));
 
         logger.info("Finished Init...");
 

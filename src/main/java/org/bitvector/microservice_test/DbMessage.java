@@ -1,35 +1,22 @@
 package org.bitvector.microservice_test;
 
-import java.util.UUID;
-
 public class DbMessage {
-    private UUID uuid;
     private String action;
     private String params;
     private String result;
 
     // Request signature
     DbMessage(String action, String params) {
-        this.uuid = UUID.randomUUID();
         this.action = action;
         this.params = params;
         this.result = null;
     }
 
     // Response signature
-    DbMessage(UUID uuid, String result) {
-        this.uuid = uuid;
+    DbMessage(String result) {
         this.action = null;
         this.params = null;
         this.result = result;
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
     }
 
     public String getAction() {
@@ -58,6 +45,6 @@ public class DbMessage {
 
     @Override
     public String toString() {
-        return uuid.toString() + ":" + action + ":" + params + ":" + result;
+        return action + ":" + params + ":" + result;
     }
 }

@@ -17,6 +17,7 @@ public class DbPersister extends AbstractVerticle {
     private Logger logger;
     private Cluster cluster;
     private Session session;
+    private MappingManager manager;
 
     private ProductAccessor productAccessor;
     private Mapper<Product> productMapper;
@@ -25,40 +26,42 @@ public class DbPersister extends AbstractVerticle {
     public void start() {
         logger = LoggerFactory.getLogger("org.bitvector.microservice_test.DbPersister");
 
+        String[] nodes = System.getProperty("org.bitvector.microservice_test.db-nodes").split(",");
+        cluster = Cluster.builder()
+                .addContactPoints(nodes)
+                .withRetryPolicy(DowngradingConsistencyRetryPolicy.INSTANCE)
+                .withReconnectionPolicy(new ConstantReconnectionPolicy(100L))
+                .build();
+        session = cluster.connect();
+        manager = new MappingManager(session);
+
         EventBus eb = vertx.eventBus();
         eb.consumer("DbPersister", this::onMessage);
         DbMessageCodec dbMessageCodec = new DbMessageCodec();
         eb.registerDefaultCodec(DbMessage.class, dbMessageCodec);
 
-        vertx.executeBlocking(future -> {
-            // Start Database
-            String[] nodes = System.getProperty("org.bitvector.microservice_test.db-nodes").split(",");
-            cluster = Cluster.builder()
-                    .addContactPoints(nodes)
-                    .withRetryPolicy(DowngradingConsistencyRetryPolicy.INSTANCE)
-                    .withReconnectionPolicy(new ConstantReconnectionPolicy(100L))
-                    .build();
-            session = cluster.connect();
-            future.complete();
-        }, result -> {
-            if (result.succeeded()) {
-                MappingManager manager = new MappingManager(session);
-                productAccessor = manager.createAccessor(ProductAccessor.class);
-                productMapper = manager.mapper(Product.class);
-            }
-        });
+        productAccessor = manager.createAccessor(ProductAccessor.class);
+        productMapper = manager.mapper(Product.class);
 
         logger.info("Started a DbPersister...");
     }
 
     @Override
     public void stop() {
+        session.closeAsync();
+        cluster.closeAsync();
         logger.info("Stopped a DbPersister...");
     }
 
     private void onMessage(Message<DbMessage> message) {
-        DbMessage dbMessage = message.body();
-        logger.info("Received: " + dbMessage.toString());
-        message.reply(new DbMessage(dbMessage.getUuid(), "pong"));
+        switch (message.body().getAction()) {
+            case "ping":
+                this.handlePing(message);
+        }
+    }
+
+    private void handlePing(Message<DbMessage> message) {
+        DbMessage dbResponse = new DbMessage("pong");
+        message.reply(dbResponse);
     }
 }
