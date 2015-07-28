@@ -65,7 +65,7 @@ public class DbPersister extends AbstractVerticle {
             case "handleGetProductId":
                 this.handleGetProductId(message);
             default:
-                logger.error("Received message with an unknown action.");
+                logger.error("Received message with an unknown action: " + "\"" + message.body().getAction() + "\"");
         }
     }
 
