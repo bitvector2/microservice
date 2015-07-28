@@ -86,8 +86,5 @@ public class Product {
                 Objects.hashCode(this.weight);
     }
 
-    public String toJson() {
-        return String.format("{\"id\":\"%s\",\"name\":\"%s\",\"price\":%f,\"weight\":%f}", id, name, price, weight);
-    }
 }
 
