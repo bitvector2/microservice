@@ -29,7 +29,7 @@ public class Main {
         Vertx vertx = Vertx.vertx();
         DeploymentOptions options = new DeploymentOptions().setInstances(threadCount);
         vertx.deployVerticle("org.bitvector.microservice_test.DbPersister", options);
-        vertx.deployVerticle("org.bitvector.microservice_test.ProductServer", options);
+        vertx.deployVerticle("org.bitvector.microservice_test.HttpServer", options);
 
         logger.info("Finished Init...");
 

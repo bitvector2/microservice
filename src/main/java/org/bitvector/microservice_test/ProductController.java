@@ -1,27 +1,31 @@
 package org.bitvector.microservice_test;
 
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.MappingManager;
-import com.datastax.driver.mapping.Result;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.util.concurrent.ListenableFuture;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.ext.web.RoutingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 public class ProductController {
+    EventBus eb;
     private Logger logger;
-    private ProductAccessor productAccessor;
-    private Mapper<Product> productMapper;
     private ObjectMapper jsonMapper;
 
-    public ProductController(Session s) {
+    public ProductController(EventBus eb) {
         logger = LoggerFactory.getLogger("org.bitvector.microservice_test.ProductController");
-        MappingManager manager = new MappingManager(s);
-        productAccessor = manager.createAccessor(ProductAccessor.class);
-        productMapper = manager.mapper(Product.class);
+        this.eb = eb;
+
+        DbMessageCodec dbMessageCodec = new DbMessageCodec();
+        eb.registerDefaultCodec(DbMessage.class, dbMessageCodec);
+
+        eb.send("DbPersister", new DbMessage("ping", null), reply -> {
+            if (reply.succeeded()) {
+                DbMessage dbMessage = (DbMessage) reply.result().body();
+                logger.info("Received: " + dbMessage.toString());
+            }
+        });
+
         jsonMapper = new ObjectMapper();
     }
 
@@ -42,6 +46,7 @@ public class ProductController {
     }
 
     public void handleGetAllProduct(RoutingContext routingContext) {
+        /*
         ListenableFuture<Result<Product>> future = productAccessor.getAllAsync();
 
         Result<Product> objs = null;
@@ -63,9 +68,11 @@ public class ProductController {
         routingContext.response()
                 .putHeader("content-type", "application/json")
                 .end(products);
+        */
     }
 
     public void handleGetProductId(RoutingContext routingContext) {
+        /*
         ListenableFuture<Product> future = productMapper.getAsync(routingContext.request().getParam("productID"));
 
         Product obj = null;
@@ -85,9 +92,11 @@ public class ProductController {
         routingContext.response()
                 .putHeader("content-type", "application/json")
                 .end(product);
+        */
     }
 
     public void handlePutProductId(RoutingContext routingContext) {
+        /*
         ListenableFuture<Product> future = productMapper.getAsync(routingContext.request().getParam("productID"));
         String body = routingContext.getBodyAsString();
 
@@ -112,9 +121,11 @@ public class ProductController {
         routingContext.response()
                 .setStatusCode(202)
                 .end();
+        */
     }
 
     public void handlePostProduct(RoutingContext routingContext) {
+        /*
         String body = routingContext.getBodyAsString();
 
         Product product = null;
@@ -129,9 +140,11 @@ public class ProductController {
         routingContext.response()
                 .setStatusCode(202)
                 .end();
+        */
     }
 
     public void handleDeleteProductId(RoutingContext routingContext) {
+        /*
         ListenableFuture<Product> future = productMapper.getAsync(routingContext.request().getParam("productID"));
 
         Product obj = null;
@@ -146,6 +159,7 @@ public class ProductController {
         routingContext.response()
                 .setStatusCode(202)
                 .end();
+        */
     }
 
 }
