@@ -23,8 +23,8 @@ public class DbPersister extends AbstractVerticle {
     private MappingManager manager;
     private ObjectMapper jsonMapper;
 
-    private ProductAccessor productAccessor;
-    private Mapper<Product> productMapper;
+    private ProductAccessor productAccessor; // Collection specific
+    private Mapper<Product> productMapper; // Collection specific
 
     @Override
     public void start() {
@@ -45,8 +45,8 @@ public class DbPersister extends AbstractVerticle {
         DbMessageCodec dbMessageCodec = new DbMessageCodec();
         eb.registerDefaultCodec(DbMessage.class, dbMessageCodec);
 
-        productAccessor = manager.createAccessor(ProductAccessor.class);
-        productMapper = manager.mapper(Product.class);
+        productAccessor = manager.createAccessor(ProductAccessor.class); // Collection specific
+        productMapper = manager.mapper(Product.class); // Collection specific
 
         logger.info("Started a DbPersister...");
     }
