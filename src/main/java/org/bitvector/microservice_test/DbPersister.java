@@ -65,7 +65,7 @@ public class DbPersister extends AbstractVerticle {
     private void handleGetAllProducts(Message<DbMessage> message) {
         Session session = sessionFactory.openSession();
         @SuppressWarnings("unchecked")
-        List<Product> objs = session.createSQLQuery("SELECT * from products").list();
+        List<Product> objs = session.createSQLQuery("SELECT * FROM products").list();
         session.close();
 
         String products = null;

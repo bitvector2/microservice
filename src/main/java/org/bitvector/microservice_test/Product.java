@@ -9,10 +9,10 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    public Integer id;
 
     @Column(name = "name")
-    private String name;
+    public String name;
 
     public Integer getId() {
         return id;
