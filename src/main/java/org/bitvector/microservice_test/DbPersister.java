@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -11,6 +12,7 @@ import org.hibernate.service.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Properties;
 
 public class DbPersister extends AbstractVerticle {
@@ -33,6 +35,7 @@ public class DbPersister extends AbstractVerticle {
         EventBus eb = vertx.eventBus();
         eb.consumer("DbPersister", this::onMessage);
         DbMessageCodec dbMessageCodec = new DbMessageCodec();
+        // Not Threadsafe
         eb.registerDefaultCodec(DbMessage.class, dbMessageCodec);
 
         jsonMapper = new ObjectMapper();
@@ -60,7 +63,11 @@ public class DbPersister extends AbstractVerticle {
     }
 
     private void handleGetAllProducts(Message<DbMessage> message) {
-        String objs = "[{\"foo\": \"bar\"}, {\"steven\": \"logue\"}]";
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("unchecked")
+        List<Product> objs = session.createSQLQuery("SELECT * from products").list();
+        session.close();
+
         String products = null;
         try {
             if (objs != null) {
