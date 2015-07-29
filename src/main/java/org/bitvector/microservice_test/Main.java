@@ -34,8 +34,8 @@ public class Main {
         Vertx.clusteredVertx(options, res -> {
             if (res.succeeded()) {
                 Vertx vertx = res.result();
-                Integer threadCount = Integer.parseInt(System.getProperty("org.bitvector.microservice_test.thread-count"));
-                vertx.deployVerticle("org.bitvector.microservice_test.DbPersister", new DeploymentOptions().setWorker(true));
+                Integer threadCount = Integer.parseInt(System.getProperty("bitvector.microservice_test.thread-count"));
+                vertx.deployVerticle("org.bitvector.microservice_test.DbPersister", new DeploymentOptions().setWorker(true).setInstances(threadCount));
                 vertx.deployVerticle("org.bitvector.microservice_test.HttpRouter", new DeploymentOptions().setInstances(threadCount));
             } else {
                 logger.info("Failed Init...");

@@ -1,60 +1,47 @@
 package org.bitvector.microservice_test;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.policies.ConstantReconnectionPolicy;
-import com.datastax.driver.core.policies.DowngradingConsistencyRetryPolicy;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.MappingManager;
-import com.datastax.driver.mapping.Result;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.util.concurrent.ListenableFuture;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Properties;
 
 public class DbPersister extends AbstractVerticle {
 
     private Logger logger;
-    private Cluster cluster;
-    private Session session;
-    private MappingManager manager;
+    private ServiceRegistry serviceRegistry;
+    private SessionFactory sessionFactory;
     private ObjectMapper jsonMapper;
-
-    private ProductAccessor productAccessor; // Collection specific
-    private Mapper<Product> productMapper; // Collection specific
 
     @Override
     public void start() {
         logger = LoggerFactory.getLogger("org.bitvector.microservice_test.DbPersister");
 
-        String[] nodes = System.getProperty("org.bitvector.microservice_test.db-nodes").split(",");
-        cluster = Cluster.builder()
-                .addContactPoints(nodes)
-                .withRetryPolicy(DowngradingConsistencyRetryPolicy.INSTANCE)
-                .withReconnectionPolicy(new ConstantReconnectionPolicy(100L))
-                .build();
-        session = cluster.connect();
-        manager = new MappingManager(session);
-        jsonMapper = new ObjectMapper();
+        Configuration configuration = new Configuration()
+                .setProperties(new Properties(System.getProperties()));
+        serviceRegistry = new StandardServiceRegistryBuilder()
+                .applySettings(configuration.getProperties()).build();
+        sessionFactory = configuration.buildSessionFactory(serviceRegistry);
 
         EventBus eb = vertx.eventBus();
         eb.consumer("DbPersister", this::onMessage);
         DbMessageCodec dbMessageCodec = new DbMessageCodec();
         eb.registerDefaultCodec(DbMessage.class, dbMessageCodec);
 
-        productAccessor = manager.createAccessor(ProductAccessor.class); // Collection specific
-        productMapper = manager.mapper(Product.class); // Collection specific
+        jsonMapper = new ObjectMapper();
 
         logger.info("Started a DbPersister...");
     }
 
     @Override
     public void stop() {
-        session.closeAsync();
-        cluster.closeAsync();
         logger.info("Stopped a DbPersister...");
     }
 
@@ -62,27 +49,22 @@ public class DbPersister extends AbstractVerticle {
         switch (message.body().getAction()) {
             case "handleGetAllProducts":
                 this.handleGetAllProducts(message);
+                break;
             case "handleGetProductId":
                 this.handleGetProductId(message);
+                break;
             default:
                 logger.error("Received message with an unknown action: " + "\"" + message.body().getAction() + "\"");
+                break;
         }
     }
 
     private void handleGetAllProducts(Message<DbMessage> message) {
-        ListenableFuture<Result<Product>> future = productAccessor.getAllAsync();
-
-        Result<Product> objs = null;
-        try {
-            objs = future.get();
-        } catch (Exception e) {
-            logger.error("Failed to get Products from DB.", e);
-        }
-
+        String objs = "[{\"foo\": \"bar\"}, {\"steven\": \"logue\"}]";
         String products = null;
         try {
             if (objs != null) {
-                products = jsonMapper.writeValueAsString(objs.all());
+                products = jsonMapper.writeValueAsString(objs);
             }
         } catch (Exception e) {
             logger.error("Failed to map Products to JSON.", e);
@@ -94,16 +76,7 @@ public class DbPersister extends AbstractVerticle {
 
     private void handleGetProductId(Message<DbMessage> message) {
         String productID = message.body().getParams();
-
-        ListenableFuture<Product> future = productMapper.getAsync(productID);
-
-        Product obj = null;
-        try {
-            obj = future.get();
-        } catch (Exception e) {
-            logger.error("Failed to get a Product from DB.", e);
-        }
-
+        String obj = null;
         String product = null;
         try {
             if (obj != null) {
