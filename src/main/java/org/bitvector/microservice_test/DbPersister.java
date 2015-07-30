@@ -29,7 +29,7 @@ public class DbPersister extends AbstractVerticle {
 
         Configuration configuration = new Configuration()
                 .setProperties(new Properties(System.getProperties()))
-                .addAnnotatedClass(Product.class);  // SUPER FUCKING IMPORTANT PER MODEL
+                .addAnnotatedClass(Product.class);  // SUPER FUCKING IMPORTANT
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties()).build();
         sessionFactory = configuration.buildSessionFactory(serviceRegistry);
@@ -87,7 +87,26 @@ public class DbPersister extends AbstractVerticle {
 
     private void handleGetProductId(Message<DbMessage> message) {
         Integer productID = Integer.parseInt(message.body().getParams());
-        // FIXME
+
+        Session session = sessionFactory.openSession();
+        List objs = session.createQuery("FROM Product WHERE id=:id")
+                .setParameter("id", productID)
+                .list();
+        session.close();
+
+        List<Product> products = new ArrayList<>();
+        for (Object obj : objs) {
+            Product product = (Product) obj;
+            products.add(product);
+        }
+
+        try {
+            String jsonString = jsonMapper.writeValueAsString(products);
+            DbMessage dbResponse = new DbMessage(jsonString);
+            message.reply(dbResponse);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     private void handlePutProductId(Message<DbMessage> message) {
