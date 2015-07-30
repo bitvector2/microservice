@@ -29,7 +29,7 @@ public class DbPersister extends AbstractVerticle {
 
         Configuration configuration = new Configuration()
                 .setProperties(new Properties(System.getProperties()))
-                .addAnnotatedClass(Product.class);  // SUPER FUCKING IMPORTANT
+                .addAnnotatedClass(Product.class);                                  // SUPER FUCKING IMPORTANT
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties()).build();
         sessionFactory = configuration.buildSessionFactory(serviceRegistry);
@@ -37,7 +37,6 @@ public class DbPersister extends AbstractVerticle {
         EventBus eb = vertx.eventBus();
         eb.consumer("DbPersister", this::onMessage);
         DbMessageCodec dbMessageCodec = new DbMessageCodec();
-        // Not Threadsafe
         eb.registerDefaultCodec(DbMessage.class, dbMessageCodec);
 
         jsonMapper = new ObjectMapper();
@@ -60,7 +59,7 @@ public class DbPersister extends AbstractVerticle {
                 this.handleGetProductId(message);
                 break;
             default:
-                logger.error("Received message with an unknown action: " + "\"" + message.body().getAction() + "\"");
+                logger.error("Received message with an unknown action.");
                 break;
         }
     }
