@@ -54,6 +54,8 @@ public class DbPersister extends AbstractVerticle {
                 break;
             default:
                 logger.error("Received message with an unknown action.");
+                DbMessage dbResponse = new DbMessage(false, null);
+                message.reply(dbResponse);
                 break;
         }
     }

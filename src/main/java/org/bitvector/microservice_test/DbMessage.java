@@ -2,26 +2,28 @@ package org.bitvector.microservice_test;
 
 import java.util.List;
 
-public class DbMessage {
+public final class DbMessage {
     private final String action;
     private final List params;
     private final List results;
-    private final Boolean succeeded;
+    private final Boolean success;
 
-    // Request signature
+    // Request constructor
     DbMessage(String action, List params) {
+        assert (action != null);
         this.action = action;
         this.params = params;
         this.results = null;
-        this.succeeded = null;
+        this.success = null;
     }
 
-    // Response signature
+    // Response constructor
     DbMessage(Boolean succeeded, List results) {
+        assert (succeeded != null);
         this.action = null;
         this.params = null;
         this.results = results;
-        this.succeeded = succeeded;
+        this.success = succeeded;
     }
 
     public String getAction() {
@@ -37,7 +39,7 @@ public class DbMessage {
     }
 
     public Boolean succeeded() {
-        return succeeded;
+        return success;
     }
 
 }
