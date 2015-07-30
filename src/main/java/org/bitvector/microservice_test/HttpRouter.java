@@ -1,5 +1,7 @@
 package org.bitvector.microservice_test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.ext.web.Router;
@@ -8,15 +10,19 @@ import io.vertx.ext.web.handler.BodyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedList;
+
 
 public class HttpRouter extends AbstractVerticle {
     private Logger logger;
     private EventBus eb;
+    private ObjectMapper jsonMapper;
 
     @Override
     public void start() {
         logger = LoggerFactory.getLogger("org.bitvector.microservice_test.HttpRouter");
         eb = vertx.eventBus();
+        jsonMapper = new ObjectMapper();
 
         // Start HTTP Router
         Router router = Router.router(vertx);
@@ -42,42 +48,52 @@ public class HttpRouter extends AbstractVerticle {
     }
 
     private void handleGetAllProducts(RoutingContext routingContext) {
-
         DbMessage dbRequest = new DbMessage("handleGetAllProducts", null);
+
         eb.send("DbPersister", dbRequest, reply -> {
             if (reply.succeeded()) {
                 DbMessage dbResponse = (DbMessage) reply.result().body();
-
+                String jsonString = null;
+                try {
+                    jsonString = jsonMapper.writeValueAsString(dbResponse.getResults());
+                } catch (JsonProcessingException e) {
+                    logger.error("Failed to convert Results to JSON", e);
+                }
                 routingContext.response()
                         .putHeader("content-type", "application/json")
-                        .end(dbResponse.getResult());
+                        .end(jsonString);
             } else {
                 routingContext.response()
                         .setStatusCode(500)
                         .end();
             }
         });
-
     }
 
     private void handleGetProductId(RoutingContext routingContext) {
-        String productID = routingContext.request().getParam("productID");
+        Integer productID = Integer.parseInt(routingContext.request().getParam("productID"));
+        LinkedList params = new LinkedList();
+        params.add(productID);
+        DbMessage dbRequest = new DbMessage("handleGetProductId", params);
 
-        DbMessage dbRequest = new DbMessage("handleGetProductId", productID);
         eb.send("DbPersister", dbRequest, reply -> {
             if (reply.succeeded()) {
                 DbMessage dbResponse = (DbMessage) reply.result().body();
-
+                String jsonString = null;
+                try {
+                    jsonString = jsonMapper.writeValueAsString(dbResponse.getResults());
+                } catch (JsonProcessingException e) {
+                    logger.error("Failed to convert Results to JSON", e);
+                }
                 routingContext.response()
                         .putHeader("content-type", "application/json")
-                        .end(dbResponse.getResult());
+                        .end(jsonString);
             } else {
                 routingContext.response()
                         .setStatusCode(500)
                         .end();
             }
         });
-
     }
 
     private void handlePutProductId(RoutingContext routingContext) {

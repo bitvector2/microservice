@@ -21,13 +21,11 @@ public class DbMessageCodec implements MessageCodec<DbMessage, DbMessage> {
 
     @Override
     public void encodeToWire(Buffer buffer, DbMessage dbMessage) {
-        byte[] bytes = new byte[0];
         try {
-            bytes = jsonMapper.writeValueAsBytes(dbMessage);
+            buffer.appendBytes(jsonMapper.writeValueAsBytes(dbMessage));
         } catch (JsonProcessingException e) {
             logger.error("Failed to convert message to wire format", e);
         }
-        buffer.setBytes(0, bytes);
     }
 
     @Override

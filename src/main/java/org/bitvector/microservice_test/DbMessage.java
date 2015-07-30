@@ -1,50 +1,40 @@
 package org.bitvector.microservice_test;
 
+import java.util.List;
+
 public class DbMessage {
-    private String action;
-    private String params;
-    private String result;
+    private final String action;
+    private final List params;
+    private final List results;
 
     // Request signature
-    DbMessage(String action, String params) {
+    DbMessage(String action, List params) {
         this.action = action;
         this.params = params;
-        this.result = null;
+        this.results = null;
     }
 
     // Response signature
-    DbMessage(String result) {
+    DbMessage(List results) {
         this.action = null;
         this.params = null;
-        this.result = result;
+        this.results = results;
     }
 
     public String getAction() {
         return action;
     }
 
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public String getParams() {
+    public List getParams() {
         return params;
     }
 
-    public void setParams(String params) {
-        this.params = params;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
+    public List getResults() {
+        return results;
     }
 
     @Override
     public String toString() {
-        return action + ":" + params + ":" + result;
+        return action + ":" + params + ":" + results;
     }
 }

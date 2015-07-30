@@ -1,7 +1,5 @@
 package org.bitvector.microservice_test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
@@ -13,7 +11,6 @@ import org.hibernate.service.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -21,7 +18,6 @@ public class DbPersister extends AbstractVerticle {
 
     private Logger logger;
     private SessionFactory sessionFactory;
-    private ObjectMapper jsonMapper;
 
     @Override
     public void start() {
@@ -38,8 +34,6 @@ public class DbPersister extends AbstractVerticle {
         eb.consumer("DbPersister", this::onMessage);
         DbMessageCodec dbMessageCodec = new DbMessageCodec();
         eb.registerDefaultCodec(DbMessage.class, dbMessageCodec);
-
-        jsonMapper = new ObjectMapper();
 
         logger.info("Started a DbPersister...");
     }
@@ -69,23 +63,12 @@ public class DbPersister extends AbstractVerticle {
         List objs = session.createQuery("FROM Product").list();
         session.close();
 
-        List<Product> products = new ArrayList<>();
-        for (Object obj : objs) {
-            Product product = (Product) obj;
-            products.add(product);
-        }
-
-        try {
-            String jsonString = jsonMapper.writeValueAsString(products);
-            DbMessage dbResponse = new DbMessage(jsonString);
-            message.reply(dbResponse);
-        } catch (JsonProcessingException e) {
-            logger.error("Failed to convert Products to JSON", e);
-        }
+        DbMessage dbResponse = new DbMessage(objs);
+        message.reply(dbResponse);
     }
 
     private void handleGetProductId(Message<DbMessage> message) {
-        Integer productID = Integer.parseInt(message.body().getParams());
+        Integer productID = (Integer) message.body().getParams().get(0);
 
         Session session = sessionFactory.openSession();
         List objs = session.createQuery("FROM Product WHERE id=:id")
@@ -93,19 +76,8 @@ public class DbPersister extends AbstractVerticle {
                 .list();
         session.close();
 
-        List<Product> products = new ArrayList<>();
-        for (Object obj : objs) {
-            Product product = (Product) obj;
-            products.add(product);
-        }
-
-        try {
-            String jsonString = jsonMapper.writeValueAsString(products);
-            DbMessage dbResponse = new DbMessage(jsonString);
-            message.reply(dbResponse);
-        } catch (JsonProcessingException e) {
-            logger.error("Failed to convert a Product to JSON", e);
-        }
+        DbMessage dbResponse = new DbMessage(objs);
+        message.reply(dbResponse);
     }
 
     private void handlePutProductId(Message<DbMessage> message) {
