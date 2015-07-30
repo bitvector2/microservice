@@ -63,20 +63,20 @@ public class DbPersister extends AbstractVerticle {
         List objs = session.createQuery("FROM Product").list();
         session.close();
 
-        DbMessage dbResponse = new DbMessage(objs);
+        DbMessage dbResponse = new DbMessage(true, objs);
         message.reply(dbResponse);
     }
 
     private void handleGetProductId(Message<DbMessage> message) {
-        Integer productID = (Integer) message.body().getParams().get(0);
+        String id = (String) message.body().getParams().get(0);
 
         Session session = sessionFactory.openSession();
         List objs = session.createQuery("FROM Product WHERE id=:id")
-                .setParameter("id", productID)
+                .setParameter("id", Integer.parseInt(id))
                 .list();
         session.close();
 
-        DbMessage dbResponse = new DbMessage(objs);
+        DbMessage dbResponse = new DbMessage(true, objs);
         message.reply(dbResponse);
     }
 

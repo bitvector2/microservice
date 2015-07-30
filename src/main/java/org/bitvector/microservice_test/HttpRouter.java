@@ -53,49 +53,57 @@ public class HttpRouter extends AbstractVerticle {
         eb.send("DbPersister", dbRequest, reply -> {
             if (reply.succeeded()) {
                 DbMessage dbResponse = (DbMessage) reply.result().body();
-                String jsonString = null;
-                try {
-                    jsonString = jsonMapper.writeValueAsString(dbResponse.getResults());
-                } catch (JsonProcessingException e) {
-                    logger.error("Failed to convert Results to JSON", e);
+
+                if (dbResponse.succeeded()) {
+                    String jsonString = null;
+                    try {
+                        jsonString = jsonMapper.writeValueAsString(dbResponse.getResults());
+                    } catch (JsonProcessingException e) {
+                        logger.error("Failed to convert Results to JSON", e);
+                    }
+                    routingContext.response()
+                            .putHeader("content-type", "application/json")
+                            .end(jsonString);
+                } else {
+                    routingContext.response()
+                            .setStatusCode(500)
+                            .end();
                 }
-                routingContext.response()
-                        .putHeader("content-type", "application/json")
-                        .end(jsonString);
-            } else {
-                routingContext.response()
-                        .setStatusCode(500)
-                        .end();
             }
         });
     }
 
+    @SuppressWarnings("unchecked")
     private void handleGetProductId(RoutingContext routingContext) {
-        Integer productID = Integer.parseInt(routingContext.request().getParam("productID"));
         LinkedList params = new LinkedList();
-        params.add(productID);
+        params.add(routingContext.request().getParam("productID"));
+
         DbMessage dbRequest = new DbMessage("handleGetProductId", params);
 
         eb.send("DbPersister", dbRequest, reply -> {
             if (reply.succeeded()) {
                 DbMessage dbResponse = (DbMessage) reply.result().body();
-                String jsonString = null;
-                try {
-                    jsonString = jsonMapper.writeValueAsString(dbResponse.getResults());
-                } catch (JsonProcessingException e) {
-                    logger.error("Failed to convert Results to JSON", e);
+
+                if (dbResponse.succeeded()) {
+                    String jsonString = null;
+                    try {
+                        jsonString = jsonMapper.writeValueAsString(dbResponse.getResults());
+                    } catch (JsonProcessingException e) {
+                        logger.error("Failed to convert Results to JSON", e);
+                    }
+                    routingContext.response()
+                            .putHeader("content-type", "application/json")
+                            .end(jsonString);
+                } else {
+                    routingContext.response()
+                            .setStatusCode(500)
+                            .end();
                 }
-                routingContext.response()
-                        .putHeader("content-type", "application/json")
-                        .end(jsonString);
-            } else {
-                routingContext.response()
-                        .setStatusCode(500)
-                        .end();
             }
         });
     }
 
+    @SuppressWarnings("unchecked")
     private void handlePutProductId(RoutingContext routingContext) {
         // FIXME
     }

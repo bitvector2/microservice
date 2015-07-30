@@ -6,19 +6,22 @@ public class DbMessage {
     private final String action;
     private final List params;
     private final List results;
+    private final Boolean succeeded;
 
     // Request signature
     DbMessage(String action, List params) {
         this.action = action;
         this.params = params;
         this.results = null;
+        this.succeeded = null;
     }
 
     // Response signature
-    DbMessage(List results) {
+    DbMessage(Boolean succeeded, List results) {
         this.action = null;
         this.params = null;
         this.results = results;
+        this.succeeded = succeeded;
     }
 
     public String getAction() {
@@ -33,8 +36,8 @@ public class DbMessage {
         return results;
     }
 
-    @Override
-    public String toString() {
-        return action + ":" + params + ":" + results;
+    public Boolean succeeded() {
+        return succeeded;
     }
+
 }
