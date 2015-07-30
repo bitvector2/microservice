@@ -77,13 +77,49 @@ CREATE TABLE products (
 ALTER TABLE products OWNER TO microservice_test;
 
 --
+-- Name: products_id_seq; Type: SEQUENCE; Schema: public; Owner: microservice_test
+--
+
+CREATE SEQUENCE products_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE products_id_seq OWNER TO microservice_test;
+
+--
+-- Name: products_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: microservice_test
+--
+
+ALTER SEQUENCE products_id_seq OWNED BY products.id;
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: microservice_test
+--
+
+ALTER TABLE ONLY products ALTER COLUMN id SET DEFAULT nextval('products_id_seq'::regclass);
+
+
+--
 -- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: microservice_test
 --
 
 COPY products (id, name) FROM stdin;
 1       Steven Logue
 2       Hoai Nguyener
+3       Tom Booth
 \.
+
+
+--
+-- Name: products_id_seq; Type: SEQUENCE SET; Schema: public; Owner: microservice_test
+--
+
+SELECT pg_catalog.setval('products_id_seq', 3, true);
 
 
 --

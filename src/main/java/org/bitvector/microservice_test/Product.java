@@ -2,17 +2,20 @@ package org.bitvector.microservice_test;
 
 import javax.persistence.*;
 
-@Entity
+@Entity()
 @Table(name = "products")
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "id")
-    public Integer id;
+    private Integer id;
 
     @Column(name = "name")
-    public String name;
+    private String name;
+
+    public void Product() {
+    }
 
     public Integer getId() {
         return id;

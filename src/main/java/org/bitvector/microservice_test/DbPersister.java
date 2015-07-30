@@ -1,5 +1,6 @@
 package org.bitvector.microservice_test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
@@ -12,13 +13,13 @@ import org.hibernate.service.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 public class DbPersister extends AbstractVerticle {
 
     private Logger logger;
-    private ServiceRegistry serviceRegistry;
     private SessionFactory sessionFactory;
     private ObjectMapper jsonMapper;
 
@@ -27,8 +28,9 @@ public class DbPersister extends AbstractVerticle {
         logger = LoggerFactory.getLogger("org.bitvector.microservice_test.DbPersister");
 
         Configuration configuration = new Configuration()
-                .setProperties(new Properties(System.getProperties()));
-        serviceRegistry = new StandardServiceRegistryBuilder()
+                .setProperties(new Properties(System.getProperties()))
+                .addAnnotatedClass(Product.class);  // SUPER FUCKING IMPORTANT PER MODEL
+        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties()).build();
         sessionFactory = configuration.buildSessionFactory(serviceRegistry);
 
@@ -45,6 +47,7 @@ public class DbPersister extends AbstractVerticle {
 
     @Override
     public void stop() {
+        sessionFactory.close();
         logger.info("Stopped a DbPersister...");
     }
 
@@ -64,37 +67,27 @@ public class DbPersister extends AbstractVerticle {
 
     private void handleGetAllProducts(Message<DbMessage> message) {
         Session session = sessionFactory.openSession();
-        @SuppressWarnings("unchecked")
-        List<Product> objs = session.createSQLQuery("SELECT * FROM products").list();
+        List objs = session.createQuery("FROM Product").list();
         session.close();
 
-        String products = null;
-        try {
-            if (objs != null) {
-                products = jsonMapper.writeValueAsString(objs);
-            }
-        } catch (Exception e) {
-            logger.error("Failed to map Products to JSON.", e);
+        List<Product> products = new ArrayList<>();
+        for (Object obj : objs) {
+            Product product = (Product) obj;
+            products.add(product);
         }
 
-        DbMessage dbResponse = new DbMessage(products);
-        message.reply(dbResponse);
+        try {
+            String jsonString = jsonMapper.writeValueAsString(products);
+            DbMessage dbResponse = new DbMessage(jsonString);
+            message.reply(dbResponse);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleGetProductId(Message<DbMessage> message) {
-        String productID = message.body().getParams();
-        String obj = null;
-        String product = null;
-        try {
-            if (obj != null) {
-                product = jsonMapper.writeValueAsString(obj);
-            }
-        } catch (Exception e) {
-            logger.error("Failed to map a Product to JSON.", e);
-        }
-
-        DbMessage dbResponse = new DbMessage(product);
-        message.reply(dbResponse);
+        Integer productID = Integer.parseInt(message.body().getParams());
+        // FIXME
     }
 
     private void handlePutProductId(Message<DbMessage> message) {
