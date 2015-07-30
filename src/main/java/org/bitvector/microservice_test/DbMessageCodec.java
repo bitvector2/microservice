@@ -1,10 +1,13 @@
 package org.bitvector.microservice_test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.MessageCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class DbMessageCodec implements MessageCodec<DbMessage, DbMessage> {
 
@@ -19,9 +22,10 @@ public class DbMessageCodec implements MessageCodec<DbMessage, DbMessage> {
     @Override
     public void encodeToWire(Buffer buffer, DbMessage dbMessage) {
         byte[] bytes = new byte[0];
+
         try {
             bytes = jsonMapper.writeValueAsBytes(dbMessage);
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             logger.error("Failed to convert message to wire format", e);
         }
         buffer.setBytes(0, bytes);
@@ -32,7 +36,7 @@ public class DbMessageCodec implements MessageCodec<DbMessage, DbMessage> {
         DbMessage dbMessage = null;
         try {
             dbMessage = jsonMapper.readValue(buffer.getBytes(), DbMessage.class);
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Failed to convert message from wire format", e);
         }
         return dbMessage;

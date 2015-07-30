@@ -81,7 +81,7 @@ public class DbPersister extends AbstractVerticle {
             DbMessage dbResponse = new DbMessage(jsonString);
             message.reply(dbResponse);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error("Failed to convert Products to JSON", e);
         }
     }
 
@@ -105,7 +105,7 @@ public class DbPersister extends AbstractVerticle {
             DbMessage dbResponse = new DbMessage(jsonString);
             message.reply(dbResponse);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error("Failed to convert a Product to JSON", e);
         }
     }
 
