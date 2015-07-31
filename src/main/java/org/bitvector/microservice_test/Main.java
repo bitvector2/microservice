@@ -5,19 +5,19 @@ import io.vertx.core.Vertx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Properties;
 
 
 public class Main {
     public static void main(String[] args) throws Exception {
         // Load settings
-        String propFile = System.getProperty("user.dir") + System.getProperty("file.separator") + "microservice_test.properties";
-        FileInputStream propStream = new FileInputStream(propFile);
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
         Properties props = new Properties(System.getProperties());
-        props.load(propStream);
+        try (InputStream resourceStream = loader.getResourceAsStream("microservice_test.properties")) {
+            props.load(resourceStream);
+        }
         System.setProperties(props);
-        propStream.close();
 
         // Start logging
         Logger logger = LoggerFactory.getLogger("org.bitvector.microservice_test.Main");
