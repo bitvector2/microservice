@@ -4,9 +4,9 @@ Testing the VERT.X library (requires Java 8):
 
 * git clone [microservice_test](https://github.com/bitvector2/microservice_test.git)
 * cd microservice_test
-* ./gradlew clean shadowJar
 * Edit microservice_test.properties
 * Edit src/main/resources/hibernate.properties
+* ./gradlew clean shadowJar
 * ./microservice_test.sh
 
 Use the following command for benchmarking:
