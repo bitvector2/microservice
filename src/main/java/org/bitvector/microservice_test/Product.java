@@ -14,9 +14,6 @@ public class Product {
     @Column(name = "name")
     private String name;
 
-    public void Product() {
-    }
-
     public Integer getId() {
         return id;
     }

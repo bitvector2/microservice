@@ -10,7 +10,7 @@ import io.vertx.ext.web.handler.BodyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 
 public class HttpRouter extends AbstractVerticle {
@@ -75,7 +75,7 @@ public class HttpRouter extends AbstractVerticle {
 
     @SuppressWarnings("unchecked")
     private void handleGetProductId(RoutingContext routingContext) {
-        LinkedList params = new LinkedList();
+        ArrayList params = new ArrayList();
         params.add(routingContext.request().getParam("productID"));
 
         DbMessage dbRequest = new DbMessage("handleGetProductId", params);
@@ -103,7 +103,6 @@ public class HttpRouter extends AbstractVerticle {
         });
     }
 
-    @SuppressWarnings("unchecked")
     private void handlePutProductId(RoutingContext routingContext) {
         // FIXME
     }
