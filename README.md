@@ -2,7 +2,7 @@
 
 Testing the VERT.X library (requires Java 8):
 
-* git clone https://github.com/bitvector2/microservice_test.git
+* git clone [microservice_test](https://github.com/bitvector2/microservice_test.git)
 * cd microservice_test
 * ./gradlew clean shadowJar
 * Edit microservice_test.properties
@@ -15,8 +15,8 @@ Use the following command for benchmarking:
 
 To setup a development environment, download and expand Groovy and Gradle into your home directory at the same level as the Git clone:
 
-* Download and unzip [Groovy 2.4.4](http://dl.bintray.com/groovy/maven/apache-groovy-sdk-2.4.4.zip)
 * Download and unzip [Gradle 2.5](https://services.gradle.org/distributions/gradle-2.5-all.zip)
+* Download and unzip [Groovy 2.4.4](http://dl.bintray.com/groovy/maven/apache-groovy-sdk-2.4.4.zip)
 
 Home directory should have the following directories and you can configure an external gradle in IntelliJ as well as a Groovy SDK
 
