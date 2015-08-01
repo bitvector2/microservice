@@ -12,11 +12,11 @@ Testing the VERT.X library (requires Java 8):
 
 Use the following command for benchmarking:
 
-* ab -n 10000 -c 64 -k http://<hostname>:8080/products/1
+* ab -n 10000 -c 64 -k http://hostname:8080/products/1
 
 Use the following for restart/fault recovery testing:
 
-* watch --interval 1 curl --silent --show-error --include --max-time 1 http://<hostname>:8080/products
+* watch --interval 1 curl --silent --show-error --include --max-time 1 http://hostname:8080/products
 
 To setup a development environment, download and expand Gradle and Groovy into your home directory at the same level as the Git clone:
 
