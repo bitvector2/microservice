@@ -5,7 +5,7 @@ import javax.persistence.*;
 
 @Entity()
 @Table(name = "products")
-public class Product {
+public class Product implements Serializable {
 
     @Id
     @GeneratedValue
