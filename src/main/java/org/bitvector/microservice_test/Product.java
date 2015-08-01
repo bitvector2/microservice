@@ -33,5 +33,13 @@ public class Product {
         this.name = name;
     }
 
+    public boolean equals(Object other) {
+        // FIXME
+    }
+    
+    public int hashCode() {
+        // FIXME
+    }
+    
 }
 
