@@ -14,8 +14,17 @@ public class Product {
     @Column(name = "name")
     private String name;
 
+    Product() {
+        this.id = null;
+        this.name = null;
+    }
+
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {

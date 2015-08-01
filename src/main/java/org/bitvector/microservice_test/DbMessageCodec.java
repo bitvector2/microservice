@@ -14,7 +14,7 @@ public class DbMessageCodec implements MessageCodec<DbMessage, DbMessage> {
     private Logger logger;
     private ObjectMapper jsonMapper;
 
-    public DbMessageCodec() {
+    DbMessageCodec() {
         logger = LoggerFactory.getLogger("org.bitvector.microservice_test.DbMessageCodec");
         jsonMapper = new ObjectMapper();
     }
