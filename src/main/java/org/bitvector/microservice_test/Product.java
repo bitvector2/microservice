@@ -2,6 +2,7 @@ package org.bitvector.microservice_test;
 
 import javax.persistence.*;
 
+
 @Entity()
 @Table(name = "products")
 public class Product {

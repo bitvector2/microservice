@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Properties;
 
+
 public class DbPersister extends AbstractVerticle {
 
     private Logger logger;

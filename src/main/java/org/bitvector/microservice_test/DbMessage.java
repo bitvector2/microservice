@@ -2,6 +2,7 @@ package org.bitvector.microservice_test;
 
 import java.util.List;
 
+
 public final class DbMessage {
     private final String action;
     private final List params;

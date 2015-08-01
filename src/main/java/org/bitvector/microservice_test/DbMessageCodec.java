@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+
 public class DbMessageCodec implements MessageCodec<DbMessage, DbMessage> {
 
     private Logger logger;
