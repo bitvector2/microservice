@@ -18,6 +18,15 @@ public class Product implements Serializable {
 
     Product() {}
 
+    Product(String name) {
+        this.name = name;
+    }
+
+    Product(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Integer getId() {
         return id;
     }
