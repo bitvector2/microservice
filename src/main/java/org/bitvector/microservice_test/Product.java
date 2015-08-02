@@ -60,7 +60,7 @@ public class Product implements Serializable {
 
         return this.getId().equals(that.getId()) && this.getName().equals(that.getName());
     }
-    
+
     public int hashCode() {
         return id.hashCode() + name.hashCode();
     }

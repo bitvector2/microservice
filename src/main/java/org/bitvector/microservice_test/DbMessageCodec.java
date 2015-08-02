@@ -54,4 +54,5 @@ public class DbMessageCodec implements MessageCodec<DbMessage, DbMessage> {
     public byte systemCodecID() {
         return -1;
     }
+
 }
