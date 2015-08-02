@@ -1,6 +1,7 @@
 package org.bitvector.microservice_test;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 
 @Entity()
@@ -34,12 +35,23 @@ public class Product implements Serializable {
     }
 
     public boolean equals(Object other) {
-        // FIXME
+        Product that;
+
+        if (this == other) {
+            return true;
+        } else if (!(other instanceof Product)) {
+            return false;
+        } else {
+            that = (Product) other;
+        }
+
+        if (!(this.getId().equals(that.getId()))) {
+            return false;
+        } else return this.getName().equals(that.getName());
     }
     
     public int hashCode() {
-        // FIXME
+        return id.hashCode() + name.hashCode();
     }
     
 }
-
