@@ -18,6 +18,10 @@ public class Product implements Serializable {
 
     Product() {}
 
+    Product(Integer id) {
+        this.id = id;
+    }
+
     Product(String name) {
         this.name = name;
     }
@@ -54,9 +58,7 @@ public class Product implements Serializable {
             that = (Product) other;
         }
 
-        if (!(this.getId().equals(that.getId()))) {
-            return false;
-        } else return this.getName().equals(that.getName());
+        return this.getId().equals(that.getId()) && this.getName().equals(that.getName());
     }
     
     public int hashCode() {
