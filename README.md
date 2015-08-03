@@ -33,11 +33,9 @@ If you want to permanently enable the Gradle daemon to accelerate Gradle builds:
 
 * echo "org.gradle.daemon=true" >> ~/.gradle/gradle.properties
 
-Technology Stack:
+Main Technology Stack:
 
 * VERT.X
 * Hibernate
-* Logback
-* Jackson JSON
 * Hazelcast
 * PostgreSQL
