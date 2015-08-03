@@ -2,11 +2,14 @@ package org.bitvector.microservice_test;
 
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
+import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.Properties;
+
 
 
 public class Main {
@@ -24,7 +27,10 @@ public class Main {
         logger.info("Starting Init...");
 
         // Start application
-        Vertx vertx = Vertx.vertx();
+
+        Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
+                new DropwizardMetricsOptions().setJmxEnabled(true)
+        ));
         vertx.deployVerticle("org.bitvector.microservice_test.DbPersister", new DeploymentOptions().setWorker(true));
         vertx.deployVerticle("org.bitvector.microservice_test.HttpRouter");
 
