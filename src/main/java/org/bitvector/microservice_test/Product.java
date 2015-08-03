@@ -1,11 +1,17 @@
 package org.bitvector.microservice_test;
 
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
 
 @Entity()
 @Table(name = "products")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Product implements Serializable {
 
     @Id
@@ -17,14 +23,6 @@ public class Product implements Serializable {
     private String name;
 
     Product() {}
-
-    Product(Integer id) {
-        this.id = id;
-    }
-
-    Product(String name) {
-        this.name = name;
-    }
 
     Product(Integer id, String name) {
         this.id = id;

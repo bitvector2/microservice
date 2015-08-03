@@ -1,5 +1,6 @@
 package org.bitvector.microservice_test;
 
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
@@ -20,6 +21,7 @@ public class DbPersister extends AbstractVerticle {
     private Logger logger;
     private SessionFactory sessionFactory;
 
+
     @Override
     public void start() {
         logger = LoggerFactory.getLogger("org.bitvector.microservice_test.DbPersister");
@@ -31,7 +33,8 @@ public class DbPersister extends AbstractVerticle {
 
         Configuration configuration = new Configuration()
                 .setProperties(new Properties(System.getProperties()))
-                .addAnnotatedClass(Product.class);                                  // SUPER FUCKING IMPORTANT
+                .addAnnotatedClass(Product.class)                                  // SUPER FUCKING IMPORTANT
+                .configure();
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties()).build();
         sessionFactory = configuration.buildSessionFactory(serviceRegistry);
