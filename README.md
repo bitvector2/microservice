@@ -32,3 +32,12 @@ Home directory should have the following directories and you can configure an ex
 If you want to permanently enable the Gradle daemon to accelerate Gradle builds:
 
 * echo "org.gradle.daemon=true" >> ~/.gradle/gradle.properties
+
+Technology Stack:
+
+* VERT.X
+* Hibernate
+* Logback
+* Jackson JSON
+* Hazelcast
+* PostgreSQL
