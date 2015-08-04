@@ -1,6 +1,6 @@
 # microservice_test
 
-Testing VERT.X, Hibernate, and Hazelcast:
+Testing VERT.X, Hibernate, and Hazelcast on a cluster of Raspberry Pi 2B servers:
 
 * git clone [microservice_test](https://github.com/bitvector2/microservice_test.git)
 * cd microservice_test
