@@ -16,7 +16,7 @@
         <property name="hibernate.c3p0.max_statements">10000</property>
         <property name="hibernate.c3p0.testConnectionOnCheckout">true</property>
         <property name="hibernate.cache.region.factory_class">
-            com.hazelcast.hibernate.HazelcastCacheRegionFactory
+            com.hazelcast.hibernate.HazelcastLocalCacheRegionFactory
         </property>
         <property name="hibernate.cache.use_second_level_cache">true</property>
         <property name="hibernate.cache.use_query_cache">true</property>
