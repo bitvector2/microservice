@@ -1,6 +1,6 @@
 # microservice_test
 
-Testing the VERT.X library:
+Testing VERT.X, Hibernate, and Hazelcast:
 
 * git clone [microservice_test](https://github.com/bitvector2/microservice_test.git)
 * cd microservice_test
@@ -22,11 +22,7 @@ To setup a development environment, download and expand Gradle into your home di
 Technology stack in use:
 
 * Java 8
-* Logback
-* Jackson
 * VERT.X
 * Hibernate
-* C3P0
 * Hazelcast
-* PostgreSQL
 * Gradle
