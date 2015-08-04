@@ -11,11 +11,12 @@ import java.io.Serializable;
 @Entity()
 @Table(name = "products")
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Product implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "products_id_seq") // PostgreSQL naming convention
+    @SequenceGenerator(name = "products_id_seq", sequenceName = "products_id_seq", initialValue = 1, allocationSize = 1)
     @Column(name = "id")
     private Integer id;
 

@@ -10,6 +10,7 @@ import io.vertx.ext.web.handler.BodyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -93,9 +94,8 @@ public class HttpRouter extends AbstractVerticle {
         });
     }
 
-    @SuppressWarnings("unchecked")
     private void handleGetProductId(RoutingContext routingContext) {
-        ArrayList params = new ArrayList();
+        ArrayList<String> params = new ArrayList<>();
         params.add(routingContext.request().getParam("productID"));
 
         DbMessage dbRequest = new DbMessage("handleGetProductId", params);
@@ -124,15 +124,101 @@ public class HttpRouter extends AbstractVerticle {
     }
 
     private void handlePutProductId(RoutingContext routingContext) {
-        // FIXME
+        ArrayList<Product> params = new ArrayList<>();
+        try {
+            Product product = jsonMapper.readValue(routingContext.getBodyAsString(), Product.class);
+            product.setId(Integer.parseInt(routingContext.request().getParam("productID")));
+            params.add(product);
+        } catch (IOException e) {
+            logger.error("Failed to convert payload to JSON", e);
+        }
+
+        DbMessage dbRequest = new DbMessage("handlePutProductId", params);
+
+        eb.send("DbPersister", dbRequest, reply -> {
+            if (reply.succeeded()) {
+                DbMessage dbResponse = (DbMessage) reply.result().body();
+
+                if (dbResponse.succeeded()) {
+                    String jsonString = null;
+                    try {
+                        jsonString = jsonMapper.writeValueAsString(dbResponse.getResults());
+                    } catch (JsonProcessingException e) {
+                        logger.error("Failed to convert Results to JSON", e);
+                    }
+                    routingContext.response()
+                            .putHeader("content-type", "application/json")
+                            .end(jsonString);
+                } else {
+                    routingContext.response()
+                            .setStatusCode(500)
+                            .end();
+                }
+            }
+        });
     }
 
     private void handlePostProduct(RoutingContext routingContext) {
-        // FIXME
+        ArrayList<Product> params = new ArrayList<>();
+        try {
+            Product product = jsonMapper.readValue(routingContext.getBodyAsString(), Product.class);
+            params.add(product);
+        } catch (IOException e) {
+            logger.error("Failed to convert payload to JSON", e);
+        }
+
+        DbMessage dbRequest = new DbMessage("handlePostProduct", params);
+
+        eb.send("DbPersister", dbRequest, reply -> {
+            if (reply.succeeded()) {
+                DbMessage dbResponse = (DbMessage) reply.result().body();
+
+                if (dbResponse.succeeded()) {
+                    String jsonString = null;
+                    try {
+                        jsonString = jsonMapper.writeValueAsString(dbResponse.getResults());
+                    } catch (JsonProcessingException e) {
+                        logger.error("Failed to convert Results to JSON", e);
+                    }
+                    routingContext.response()
+                            .putHeader("content-type", "application/json")
+                            .end(jsonString);
+                } else {
+                    routingContext.response()
+                            .setStatusCode(500)
+                            .end();
+                }
+            }
+        });
     }
 
     private void handleDeleteProductId(RoutingContext routingContext) {
-        // FIXME
+        ArrayList<String> params = new ArrayList<>();
+        params.add(routingContext.request().getParam("productID"));
+
+        DbMessage dbRequest = new DbMessage("handleDeleteProductId", params);
+
+        eb.send("DbPersister", dbRequest, reply -> {
+            if (reply.succeeded()) {
+                DbMessage dbResponse = (DbMessage) reply.result().body();
+
+                if (dbResponse.succeeded()) {
+                    String jsonString = null;
+                    try {
+                        jsonString = jsonMapper.writeValueAsString(dbResponse.getResults());
+                    } catch (JsonProcessingException e) {
+                        logger.error("Failed to convert Results to JSON", e);
+                    }
+                    routingContext.response()
+                            .putHeader("content-type", "application/json")
+                            .end(jsonString);
+                } else {
+                    routingContext.response()
+                            .setStatusCode(500)
+                            .end();
+                }
+            }
+        });
     }
 
 }
