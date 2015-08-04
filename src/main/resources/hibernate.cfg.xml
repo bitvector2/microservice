@@ -4,8 +4,8 @@
     <session-factory>
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
         <property name="hibernate.connection.url">
-            <!-- jdbc:postgresql://192.168.10.157/microservice_test -->
-            jdbc:postgresql://10.130.48.236/microservice_test
+            jdbc:postgresql://192.168.10.157/microservice_test
+            <!-- jdbc:postgresql://10.130.48.236/microservice_test -->
         </property>
         <property name="hibernate.connection.username">microservice_test</property>
         <property name="hibernate.connection.password">microservice_test</property>

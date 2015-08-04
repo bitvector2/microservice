@@ -15,7 +15,8 @@ import java.io.Serializable;
 public class Product implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "products_id_seq") // PostgreSQL naming convention
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "products_id_seq")
+    // PostgreSQL naming convention and defaults
     @SequenceGenerator(name = "products_id_seq", sequenceName = "products_id_seq", initialValue = 1, allocationSize = 1)
     @Column(name = "id")
     private Integer id;
