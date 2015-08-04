@@ -2,7 +2,7 @@
 
 Testing VERT.X, Hibernate, and Hazelcast on a cluster of Raspberry Pi 2B servers:
 
-* git clone [microservice_test](https://github.com/bitvector2/microservice_test.git)
+* git clone https://github.com/bitvector2/microservice_test.git
 * cd microservice_test
 * Edit src/main/resources/microservice_test.properties
 * Edit src/main/resources/hibernate.cfg.xml
