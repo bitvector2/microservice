@@ -28,7 +28,7 @@ public class HttpRouter extends AbstractVerticle {
         // Start HTTP Router
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
-        router.head("/").handler(this::handlePing);
+        router.head("/products").handler(this::handlePingProduct);
         router.get("/products").handler(this::handleGetAllProducts);
         router.get("/products/:productID").handler(this::handleGetProductId);
         router.put("/products/:productID").handler(this::handlePutProductId);
@@ -49,8 +49,8 @@ public class HttpRouter extends AbstractVerticle {
         logger.info("Stopped a HttpRouter...");
     }
 
-    private void handlePing(RoutingContext routingContext) {
-        DbMessage dbRequest = new DbMessage("handlePing", null);
+    private void handlePingProduct(RoutingContext routingContext) {
+        DbMessage dbRequest = new DbMessage("handlePingProduct", null);
 
         eb.send("DbPersister", dbRequest, reply -> {
             if (reply.succeeded()) {

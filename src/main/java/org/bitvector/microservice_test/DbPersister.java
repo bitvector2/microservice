@@ -52,8 +52,8 @@ public class DbPersister extends AbstractVerticle {
 
     private void onMessage(Message<DbMessage> message) {
         switch (message.body().getAction()) {
-            case "handlePing":
-                this.handlePing(message);
+            case "handlePingProduct":
+                this.handlePingProduct(message);
                 break;
             case "handleGetAllProducts":
                 this.handleGetAllProducts(message);
@@ -77,7 +77,7 @@ public class DbPersister extends AbstractVerticle {
         }
     }
 
-    private void handlePing(Message<DbMessage> message) {
+    private void handlePingProduct(Message<DbMessage> message) {
         Session session = sessionFactory.openSession();
         message.reply(new DbMessage(true, null));
         session.disconnect();
