@@ -24,5 +24,6 @@ Technology stack in use:
 * Java 8
 * VERT.X
 * Hibernate
+* HikariCP
 * Hazelcast
 * Gradle
