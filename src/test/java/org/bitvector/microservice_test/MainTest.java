@@ -1,4 +1,4 @@
-package org.bitvector.microservice_tests;
+package org.bitvector.microservice_test;
 
 import org.junit.Test;
 import org.slf4j.Logger;
