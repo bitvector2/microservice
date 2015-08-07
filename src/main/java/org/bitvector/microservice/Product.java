@@ -1,4 +1,4 @@
-package org.bitvector.microservice_test;
+package org.bitvector.microservice;
 
 
 import org.hibernate.annotations.Cache;

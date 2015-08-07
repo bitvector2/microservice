@@ -1,4 +1,4 @@
-package org.bitvector.microservice_test;
+package org.bitvector.microservice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +21,7 @@ public class HttpRouter extends AbstractVerticle {
 
     @Override
     public void start() {
-        logger = LoggerFactory.getLogger("org.bitvector.microservice_test.HttpRouter");
+        logger = LoggerFactory.getLogger("org.bitvector.microservice.HttpRouter");
         eb = vertx.eventBus();
         jsonMapper = new ObjectMapper();
 

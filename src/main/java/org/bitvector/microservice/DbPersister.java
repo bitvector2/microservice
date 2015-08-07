@@ -1,4 +1,4 @@
-package org.bitvector.microservice_test;
+package org.bitvector.microservice;
 
 
 import io.vertx.core.AbstractVerticle;
@@ -26,7 +26,7 @@ public class DbPersister extends AbstractVerticle {
 
     @Override
     public void start() {
-        logger = LoggerFactory.getLogger("org.bitvector.microservice_test.DbPersister");
+        logger = LoggerFactory.getLogger("org.bitvector.microservice.DbPersister");
 
         EventBus eb = vertx.eventBus();
         eb.consumer("DbPersister", this::onMessage);

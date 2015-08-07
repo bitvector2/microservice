@@ -13,7 +13,7 @@
         <property name="hibernate.hikari.idleTimeout">30000</property>
         <property name="hibernate.hikari.dataSourceClassName">org.postgresql.ds.PGSimpleDataSource</property>
         <property name="hibernate.hikari.dataSource.url">
-            <!-- jdbc:postgresql://192.168.10.157/microservice_test -->
+            <!-- jdbc:postgresql://192.168.10.157/microservice -->
             jdbc:postgresql://10.130.48.236/microservice_test
         </property>
         <property name="hibernate.hikari.dataSource.user">microservice_test</property>

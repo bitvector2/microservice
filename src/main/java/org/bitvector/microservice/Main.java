@@ -1,4 +1,4 @@
-package org.bitvector.microservice_test;
+package org.bitvector.microservice;
 
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
@@ -17,13 +17,13 @@ public class Main {
         // Load settings
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         Properties props = new Properties(System.getProperties());
-        try (InputStream resourceStream = loader.getResourceAsStream("microservice_test.properties")) {
+        try (InputStream resourceStream = loader.getResourceAsStream("microservice.properties")) {
             props.load(resourceStream);
         }
         System.setProperties(props);
 
         // Start logging
-        Logger logger = LoggerFactory.getLogger("org.bitvector.microservice_test.Main");
+        Logger logger = LoggerFactory.getLogger("org.bitvector.microservice.Main");
         logger.info("Starting Init...");
 
         // Start application
@@ -31,8 +31,8 @@ public class Main {
         Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
                 new DropwizardMetricsOptions().setJmxEnabled(true)
         ));
-        vertx.deployVerticle("org.bitvector.microservice_test.DbPersister", new DeploymentOptions().setWorker(true));
-        vertx.deployVerticle("org.bitvector.microservice_test.HttpRouter");
+        vertx.deployVerticle("org.bitvector.microservice.DbPersister", new DeploymentOptions().setWorker(true));
+        vertx.deployVerticle("org.bitvector.microservice.HttpRouter");
 
         logger.info("Finished Init...");
     }

@@ -1,4 +1,4 @@
-package org.bitvector.microservice_test;
+package org.bitvector.microservice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +16,7 @@ public class DbMessageCodec implements MessageCodec<DbMessage, DbMessage> {
     private ObjectMapper jsonMapper;
 
     DbMessageCodec() {
-        logger = LoggerFactory.getLogger("org.bitvector.microservice_test.DbMessageCodec");
+        logger = LoggerFactory.getLogger("org.bitvector.microservice.DbMessageCodec");
         jsonMapper = new ObjectMapper();
     }
 
