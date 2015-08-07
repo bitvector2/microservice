@@ -79,8 +79,8 @@ public class DbPersister extends AbstractVerticle {
 
     private void handlePingProduct(Message<DbMessage> message) {
         Session session = sessionFactory.openSession();
-        message.reply(new DbMessage(true, null));
         session.disconnect();
+        message.reply(new DbMessage(true, null));
     }
 
     private void handleGetAllProducts(Message<DbMessage> message) {
@@ -93,10 +93,10 @@ public class DbPersister extends AbstractVerticle {
     }
 
     private void handleGetProductId(Message<DbMessage> message) {
-        String id = (String) message.body().getParams().get(0);
+        Integer id = Integer.parseInt((String) message.body().getParams().get(0));
         ArrayList<Product> objs = new ArrayList<>();
         Session session = sessionFactory.openSession();
-        Product product = (Product) session.get(Product.class, Integer.parseInt(id));
+        Product product = (Product) session.get(Product.class, id);
         objs.add(product);
         session.disconnect();
         message.reply(new DbMessage(true, objs));
@@ -123,10 +123,10 @@ public class DbPersister extends AbstractVerticle {
     }
 
     private void handleDeleteProductId(Message<DbMessage> message) {
-        String id = (String) message.body().getParams().get(0);
+        Integer id = Integer.parseInt((String) message.body().getParams().get(0));
         Session session = sessionFactory.openSession();
         Transaction tx = session.beginTransaction();
-        Product product = (Product) session.get(Product.class, Integer.parseInt(id));
+        Product product = (Product) session.load(Product.class, id);
         session.delete(product);
         tx.commit();
         session.disconnect();
