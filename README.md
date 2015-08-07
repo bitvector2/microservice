@@ -3,11 +3,11 @@
 Testing VERT.X, Hibernate, and Hazelcast on a cluster of Raspberry Pi 2B servers:
 
 * git clone https://github.com/bitvector2/microservice.git
-* cd microservice_test
-* Edit src/main/resources/microservice_test.properties
+* cd microservice
+* Edit src/main/resources/microservice.properties
 * Edit src/main/resources/hibernate.cfg.xml
 * ./gradlew clean shadowJar
-* ./microservice_test.sh
+* ./microservice.sh
 
 Use the following commands for benchmarking/fault recovery:
 
