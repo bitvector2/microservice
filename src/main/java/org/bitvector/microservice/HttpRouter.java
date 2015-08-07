@@ -37,8 +37,8 @@ public class HttpRouter extends AbstractVerticle {
 
         // Start HTTP Listener
         vertx.createHttpServer().requestHandler(router::accept).listen(
-                Integer.parseInt(System.getProperty("bitvector.microservice_test.listen-port")),
-                System.getProperty("bitvector.microservice_test.listen-address")
+                Integer.parseInt(System.getProperty("bitvector.microservice.listen-port")),
+                System.getProperty("bitvector.microservice.listen-address")
         );
 
         logger.info("Started a HttpRouter...");
