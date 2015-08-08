@@ -6,6 +6,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 
 @Entity()
@@ -47,22 +48,25 @@ public class Product implements Serializable {
         this.name = name;
     }
 
-    public boolean equals(Object other) {
-        Product that;
-
-        if (this == other) {
-            return true;
-        } else if (!(other instanceof Product)) {
-            return false;
-        } else {
-            that = (Product) other;
-        }
-
-        return this.getId().equals(that.getId()) && this.getName().equals(that.getName());
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(id, product.id) &&
+                Objects.equals(name, product.name);
     }
 
+    @Override
     public int hashCode() {
-        return id.hashCode() + name.hashCode();
+        return Objects.hash(id, name);
     }
-    
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
