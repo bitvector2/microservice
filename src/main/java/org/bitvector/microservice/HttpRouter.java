@@ -28,12 +28,11 @@ public class HttpRouter extends AbstractVerticle {
         // Start HTTP Router
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
-        router.head("/products").handler(this::handlePingProduct);
         router.get("/products").handler(this::handleGetAllProducts);
-        router.get("/products/:productID").handler(this::handleGetProductId);
-        router.put("/products/:productID").handler(this::handlePutProductId);
+        router.get("/products/:productID").handler(this::handleGetProductById);
+        router.put("/products/:productID").handler(this::handlePutProductById);
         router.post("/products").handler(this::handlePostProduct);
-        router.delete("/products/:productID").handler(this::handleDeleteProductId);
+        router.delete("/products/:productID").handler(this::handleDeleteProductById);
 
         // Start HTTP Listener
         vertx.createHttpServer().requestHandler(router::accept).listen(
@@ -49,29 +48,11 @@ public class HttpRouter extends AbstractVerticle {
         logger.info("Stopped a HttpRouter...");
     }
 
-    private void handlePingProduct(RoutingContext routingContext) {
-        DbMessage dbRequest = new DbMessage("handlePingProduct", null);
 
-        eb.send("DbPersister", dbRequest, reply -> {
-            if (reply.succeeded()) {
-                DbMessage dbResponse = (DbMessage) reply.result().body();
-
-                if (dbResponse.succeeded()) {
-                    routingContext.response()
-                            .setStatusCode(200)
-                            .end();
-                } else {
-                    routingContext.response()
-                            .setStatusCode(500)
-                            .end();
-                }
-            }
-        });
-    }
     private void handleGetAllProducts(RoutingContext routingContext) {
-        DbMessage dbRequest = new DbMessage("handleGetAllProducts", null);
+        DbMessage dbRequest = new DbMessage("getAllProducts", null);
 
-        eb.send("DbPersister", dbRequest, reply -> {
+        eb.send("DbProxy", dbRequest, reply -> {
             if (reply.succeeded()) {
                 DbMessage dbResponse = (DbMessage) reply.result().body();
 
@@ -94,13 +75,13 @@ public class HttpRouter extends AbstractVerticle {
         });
     }
 
-    private void handleGetProductId(RoutingContext routingContext) {
+    private void handleGetProductById(RoutingContext routingContext) {
         ArrayList<String> params = new ArrayList<>();
         params.add(routingContext.request().getParam("productID"));
 
-        DbMessage dbRequest = new DbMessage("handleGetProductId", params);
+        DbMessage dbRequest = new DbMessage("getProductById", params);
 
-        eb.send("DbPersister", dbRequest, reply -> {
+        eb.send("DbProxy", dbRequest, reply -> {
             if (reply.succeeded()) {
                 DbMessage dbResponse = (DbMessage) reply.result().body();
 
@@ -123,7 +104,7 @@ public class HttpRouter extends AbstractVerticle {
         });
     }
 
-    private void handlePutProductId(RoutingContext routingContext) {
+    private void handlePutProductById(RoutingContext routingContext) {
         ArrayList<Product> params = new ArrayList<>();
         try {
             Product product = jsonMapper.readValue(routingContext.getBodyAsString(), Product.class);
@@ -133,22 +114,16 @@ public class HttpRouter extends AbstractVerticle {
             logger.error("Failed to convert payload to JSON", e);
         }
 
-        DbMessage dbRequest = new DbMessage("handlePutProductId", params);
+        DbMessage dbRequest = new DbMessage("updateProduct", params);
 
-        eb.send("DbPersister", dbRequest, reply -> {
+        eb.send("DbProxy", dbRequest, reply -> {
             if (reply.succeeded()) {
                 DbMessage dbResponse = (DbMessage) reply.result().body();
 
                 if (dbResponse.succeeded()) {
-                    String jsonString = null;
-                    try {
-                        jsonString = jsonMapper.writeValueAsString(dbResponse.getResults());
-                    } catch (JsonProcessingException e) {
-                        logger.error("Failed to convert Results to JSON", e);
-                    }
                     routingContext.response()
-                            .putHeader("content-type", "application/json")
-                            .end(jsonString);
+                            .setStatusCode(200)
+                            .end();
                 } else {
                     routingContext.response()
                             .setStatusCode(500)
@@ -167,22 +142,16 @@ public class HttpRouter extends AbstractVerticle {
             logger.error("Failed to convert payload to JSON", e);
         }
 
-        DbMessage dbRequest = new DbMessage("handlePostProduct", params);
+        DbMessage dbRequest = new DbMessage("addProduct", params);
 
-        eb.send("DbPersister", dbRequest, reply -> {
+        eb.send("DbProxy", dbRequest, reply -> {
             if (reply.succeeded()) {
                 DbMessage dbResponse = (DbMessage) reply.result().body();
 
                 if (dbResponse.succeeded()) {
-                    String jsonString = null;
-                    try {
-                        jsonString = jsonMapper.writeValueAsString(dbResponse.getResults());
-                    } catch (JsonProcessingException e) {
-                        logger.error("Failed to convert Results to JSON", e);
-                    }
                     routingContext.response()
-                            .putHeader("content-type", "application/json")
-                            .end(jsonString);
+                            .setStatusCode(200)
+                            .end();
                 } else {
                     routingContext.response()
                             .setStatusCode(500)
@@ -192,26 +161,35 @@ public class HttpRouter extends AbstractVerticle {
         });
     }
 
-    private void handleDeleteProductId(RoutingContext routingContext) {
-        ArrayList<String> params = new ArrayList<>();
-        params.add(routingContext.request().getParam("productID"));
+    private void handleDeleteProductById(RoutingContext routingContext) {
+        ArrayList<String> params1 = new ArrayList<>();
+        params1.add(routingContext.request().getParam("productID"));
 
-        DbMessage dbRequest = new DbMessage("handleDeleteProductId", params);
+        DbMessage dbRequest1 = new DbMessage("getProductById", params1);
 
-        eb.send("DbPersister", dbRequest, reply -> {
-            if (reply.succeeded()) {
-                DbMessage dbResponse = (DbMessage) reply.result().body();
+        eb.send("DbProxy", dbRequest1, reply1 -> {
+            if (reply1.succeeded()) {
+                DbMessage dbResponse1 = (DbMessage) reply1.result().body();
 
-                if (dbResponse.succeeded()) {
-                    String jsonString = null;
-                    try {
-                        jsonString = jsonMapper.writeValueAsString(dbResponse.getResults());
-                    } catch (JsonProcessingException e) {
-                        logger.error("Failed to convert Results to JSON", e);
-                    }
-                    routingContext.response()
-                            .putHeader("content-type", "application/json")
-                            .end(jsonString);
+                if (dbResponse1.succeeded()) {
+                    Product product = (Product) dbResponse1.getResults().get(0);
+                    ArrayList<Product> params2 = new ArrayList<>();
+                    params2.add(product);
+
+                    DbMessage dbRequest2 = new DbMessage("deleteProduct", params2);
+
+                    eb.send("DbProxy", dbRequest2, reply2 -> {
+                        if (reply2.succeeded()) {
+                            routingContext.response()
+                                    .setStatusCode(200)
+                                    .end();
+                        } else {
+                            routingContext.response()
+                                    .setStatusCode(500)
+                                    .end();
+                        }
+                    });
+
                 } else {
                     routingContext.response()
                             .setStatusCode(500)
@@ -219,6 +197,7 @@ public class HttpRouter extends AbstractVerticle {
                 }
             }
         });
+
     }
 
 }

@@ -31,7 +31,7 @@ public class Main {
         Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
                 new DropwizardMetricsOptions().setJmxEnabled(true)
         ));
-        vertx.deployVerticle("org.bitvector.microservice.DbPersister", new DeploymentOptions().setWorker(true));
+        vertx.deployVerticle("org.bitvector.microservice.DbProxy", new DeploymentOptions().setWorker(true));
         vertx.deployVerticle("org.bitvector.microservice.HttpRouter");
 
         logger.info("Finished Init...");
