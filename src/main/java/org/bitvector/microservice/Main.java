@@ -2,8 +2,6 @@ package org.bitvector.microservice;
 
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
-import io.vertx.core.VertxOptions;
-import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +25,7 @@ public class Main {
         logger.info("Starting Init...");
 
         // Start application
-
-        Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
-                new DropwizardMetricsOptions().setJmxEnabled(true)
-        ));
+        Vertx vertx = Vertx.vertx();
         vertx.deployVerticle("org.bitvector.microservice.DbProxy", new DeploymentOptions().setWorker(true));
         vertx.deployVerticle("org.bitvector.microservice.HttpRouter");
 

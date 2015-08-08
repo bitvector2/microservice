@@ -91,6 +91,7 @@ public class DbProxy extends AbstractVerticle implements ProductDAO {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Product> getAllProducts() {
         Session session = sessionFactory.openSession();
         List products = session.createQuery("FROM Product")
@@ -101,11 +102,15 @@ public class DbProxy extends AbstractVerticle implements ProductDAO {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Product getProductById(Integer id) {
         Session session = sessionFactory.openSession();
-        Product product = (Product) session.get(Product.class, id);
+        List products = session.createQuery("FROM Product WHERE id=:id")
+                .setParameter("id", id)
+                .setCacheable(true)
+                .list();
         session.disconnect();
-        return product;
+        return (Product) products.get(0);
     }
 
     @Override
