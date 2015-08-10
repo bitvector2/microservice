@@ -8,7 +8,7 @@ public class DbMessage {
     private Object result = null;
     private Boolean success = null;
 
-    // Product Request signatures
+    // Generic signatures
     DbMessage(String action) {
         this.action = action;
     }
@@ -18,14 +18,14 @@ public class DbMessage {
         this.param = param;
     }
 
+    DbMessage(Boolean success) {
+        this.success = success;
+    }
+
+    // Product specific signatures
     DbMessage(String action, Product param) {
         this.action = action;
         this.param = param;
-    }
-
-    // Product Response signatures
-    DbMessage(Boolean success) {
-        this.success = success;
     }
 
     DbMessage(Boolean success, Product result) {
@@ -37,6 +37,8 @@ public class DbMessage {
         this.success = success;
         this.result = result;
     }
+
+    // Future entity specific signatures go here
 
     public Boolean getSuccess() {
         return success;
