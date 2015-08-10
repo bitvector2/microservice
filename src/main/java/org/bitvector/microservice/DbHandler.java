@@ -56,7 +56,12 @@ public class DbHandler extends AbstractVerticle implements ProductDAO {
             break;
             case "getProductById": {
                 Integer id = (Integer) message.body().getParam();
-                message.reply(new DbMessage(true, this.getProductById(id)));
+                Product product = this.getProductById(id);
+                if (product == null) {
+                    message.reply(new DbMessage(false));
+                } else {
+                    message.reply(new DbMessage(true, this.getProductById(id)));
+                }
             }
             break;
             case "addProduct": {
@@ -108,7 +113,11 @@ public class DbHandler extends AbstractVerticle implements ProductDAO {
                 .setCacheable(true)
                 .list();
         session.disconnect();
-        return (Product) products.get(0);
+        if (products.size() == 0) {
+            return null;
+        } else {
+            return (Product) products.get(0);
+        }
     }
 
     @Override

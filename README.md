@@ -17,7 +17,7 @@ Use the following commands for benchmarking/fault recovery:
 To setup a development environment, download and expand Gradle into your home directory and configure as such in
 IntelliJ IDEA
 
-* Download: [Gradle 2.5](https://services.gradle.org/distributions/gradle-2.5-all.zip)
+* Download: [Gradle 2.5](https://services.gradle.org/distributions/gradle-2.6-all.zip)
 * Run: echo "org.gradle.daemon=true" >> ~/.gradle/gradle.properties
 
 Technology stack in use:

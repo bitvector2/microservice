@@ -93,7 +93,7 @@ public class HttpHandler extends AbstractVerticle {
                             .end(jsonString);
                 } else {
                     routingContext.response()
-                            .setStatusCode(500)
+                            .setStatusCode(404)
                             .end();
                 }
             }

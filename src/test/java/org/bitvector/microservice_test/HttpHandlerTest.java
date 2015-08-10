@@ -29,7 +29,12 @@ public class HttpHandlerTest {
     }
 
     @Test(timeout = 3000)
-    public void givenEmptyProductsWhenGetByIdThenRespondWith404AndJsonContentType() {
-        when().get("/products/0").then().contentType("application/json").statusCode(404);
+    public void givenEmptyProductsWhenGetByIdThenRespondWith404() {
+        when().get("/products/0").then().statusCode(404);
+    }
+
+    @Test(timeout = 3000)
+    public void givenSomeProductsWhenGetAllThenRespondWith200AndJsonContentType() {
+        when().get("/products").then().contentType("application/json").statusCode(200);
     }
 }
