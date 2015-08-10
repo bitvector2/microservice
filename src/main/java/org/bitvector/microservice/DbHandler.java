@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Properties;
 
 
-public class DbProxy extends AbstractVerticle implements ProductDAO {
+public class DbHandler extends AbstractVerticle implements ProductDAO {
 
     private Logger logger;
     private SessionFactory sessionFactory;
@@ -26,10 +26,10 @@ public class DbProxy extends AbstractVerticle implements ProductDAO {
 
     @Override
     public void start() {
-        logger = LoggerFactory.getLogger("org.bitvector.microservice.DbProxy");
+        logger = LoggerFactory.getLogger("org.bitvector.microservice.DbHandler");
 
         EventBus eb = vertx.eventBus();
-        eb.consumer("DbProxy", this::onMessage);
+        eb.consumer("DbHandler", this::onMessage);
         DbMessageCodec dbMessageCodec = new DbMessageCodec();
         eb.registerDefaultCodec(DbMessage.class, dbMessageCodec);
 
@@ -41,13 +41,13 @@ public class DbProxy extends AbstractVerticle implements ProductDAO {
                 .applySettings(configuration.getProperties()).build();
         sessionFactory = configuration.buildSessionFactory(serviceRegistry);
 
-        logger.info("Started a DbProxy...");
+        logger.info("Started a DbHandler...");
     }
 
     @Override
     public void stop() {
         sessionFactory.close();
-        logger.info("Stopped a DbProxy...");
+        logger.info("Stopped a DbHandler...");
     }
 
     private void onMessage(Message<DbMessage> message) {
@@ -105,8 +105,8 @@ public class DbProxy extends AbstractVerticle implements ProductDAO {
     @Override
     public Product getProductById(Integer id) {
         Session session = sessionFactory.openSession();
-        List products = session.createQuery("FROM Product WHERE id=:id")
-                .setParameter("id", id)
+        List products = session.createQuery("FROM Product WHERE id=:ID")
+                .setParameter("ID", id)
                 .setCacheable(true)
                 .list();
         session.disconnect();

@@ -13,25 +13,25 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 
-public class HttpRouter extends AbstractVerticle {
+public class HttpHandler extends AbstractVerticle {
     private Logger logger;
     private EventBus eb;
     private ObjectMapper jsonMapper;
 
     @Override
     public void start() {
-        logger = LoggerFactory.getLogger("org.bitvector.microservice.HttpRouter");
+        logger = LoggerFactory.getLogger("org.bitvector.microservice.HttpHandler");
         eb = vertx.eventBus();
         jsonMapper = new ObjectMapper();
 
         // Start HTTP Router
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
-        router.get("/products").handler(this::handleGetAllProducts);
-        router.get("/products/:productID").handler(this::handleGetProductById);
-        router.put("/products/:productID").handler(this::handlePutProductById);
-        router.post("/products").handler(this::handlePostProduct);
-        router.delete("/products/:productID").handler(this::handleDeleteProductById);
+        router.get("/products").handler(this::getAllProducts);
+        router.get("/products/:ID").handler(this::getProductById);
+        router.put("/products/:ID").handler(this::putProductById);
+        router.post("/products").handler(this::postProduct);
+        router.delete("/products/:ID").handler(this::deleteProductById);
 
         // Start HTTP Listener
         vertx.createHttpServer().requestHandler(router::accept).listen(
@@ -39,19 +39,19 @@ public class HttpRouter extends AbstractVerticle {
                 System.getProperty("bitvector.microservice.listen-address")
         );
 
-        logger.info("Started a HttpRouter...");
+        logger.info("Started a HttpHandler...");
     }
 
     @Override
     public void stop() {
-        logger.info("Stopped a HttpRouter...");
+        logger.info("Stopped a HttpHandler...");
     }
 
 
-    private void handleGetAllProducts(RoutingContext routingContext) {
+    private void getAllProducts(RoutingContext routingContext) {
         DbMessage dbRequest = new DbMessage("getAllProducts");
 
-        eb.send("DbProxy", dbRequest, reply -> {
+        eb.send("DbHandler", dbRequest, reply -> {
             if (reply.succeeded()) {
                 DbMessage dbResponse = (DbMessage) reply.result().body();
 
@@ -74,11 +74,11 @@ public class HttpRouter extends AbstractVerticle {
         });
     }
 
-    private void handleGetProductById(RoutingContext routingContext) {
-        Integer id = Integer.parseInt(routingContext.request().getParam("productID"));
+    private void getProductById(RoutingContext routingContext) {
+        Integer id = Integer.parseInt(routingContext.request().getParam("ID"));
         DbMessage dbRequest = new DbMessage("getProductById", id);
 
-        eb.send("DbProxy", dbRequest, reply -> {
+        eb.send("DbHandler", dbRequest, reply -> {
             if (reply.succeeded()) {
                 DbMessage dbResponse = (DbMessage) reply.result().body();
 
@@ -101,17 +101,17 @@ public class HttpRouter extends AbstractVerticle {
         });
     }
 
-    private void handlePutProductById(RoutingContext routingContext) {
+    private void putProductById(RoutingContext routingContext) {
         Product product = null;
         try {
             product = jsonMapper.readValue(routingContext.getBodyAsString(), Product.class);
-            product.setId(Integer.parseInt(routingContext.request().getParam("productID")));
+            product.setId(Integer.parseInt(routingContext.request().getParam("ID")));
         } catch (IOException e) {
             logger.error("Failed to convert payload to JSON", e);
         }
         DbMessage dbRequest = new DbMessage("updateProduct", product);
 
-        eb.send("DbProxy", dbRequest, reply -> {
+        eb.send("DbHandler", dbRequest, reply -> {
             if (reply.succeeded()) {
                 DbMessage dbResponse = (DbMessage) reply.result().body();
 
@@ -128,7 +128,7 @@ public class HttpRouter extends AbstractVerticle {
         });
     }
 
-    private void handlePostProduct(RoutingContext routingContext) {
+    private void postProduct(RoutingContext routingContext) {
         Product product = null;
         try {
             product = jsonMapper.readValue(routingContext.getBodyAsString(), Product.class);
@@ -137,7 +137,7 @@ public class HttpRouter extends AbstractVerticle {
         }
         DbMessage dbRequest = new DbMessage("addProduct", product);
 
-        eb.send("DbProxy", dbRequest, reply -> {
+        eb.send("DbHandler", dbRequest, reply -> {
             if (reply.succeeded()) {
                 DbMessage dbResponse = (DbMessage) reply.result().body();
 
@@ -154,11 +154,11 @@ public class HttpRouter extends AbstractVerticle {
         });
     }
 
-    private void handleDeleteProductById(RoutingContext routingContext) {
-        Integer id = Integer.parseInt(routingContext.request().getParam("productID"));
+    private void deleteProductById(RoutingContext routingContext) {
+        Integer id = Integer.parseInt(routingContext.request().getParam("ID"));
         DbMessage dbRequest1 = new DbMessage("getProductById", id);
 
-        eb.send("DbProxy", dbRequest1, reply1 -> {
+        eb.send("DbHandler", dbRequest1, reply1 -> {
             if (reply1.succeeded()) {
                 DbMessage dbResponse1 = (DbMessage) reply1.result().body();
 
@@ -166,7 +166,7 @@ public class HttpRouter extends AbstractVerticle {
                     Product product = (Product) dbResponse1.getResult();
                     DbMessage dbRequest2 = new DbMessage("deleteProduct", product);
 
-                    eb.send("DbProxy", dbRequest2, reply2 -> {
+                    eb.send("DbHandler", dbRequest2, reply2 -> {
                         if (reply2.succeeded()) {
                             routingContext.response()
                                     .setStatusCode(200)
