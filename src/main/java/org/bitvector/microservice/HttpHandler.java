@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-
 public class HttpHandler extends AbstractVerticle {
     private Logger logger;
     private EventBus eb;

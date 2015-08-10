@@ -1,6 +1,5 @@
 package org.bitvector.microservice;
 
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -8,13 +7,11 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
-
 @Entity()
 @Table(name = "products")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Product implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "products_id_seq") // PostgreSQL naming convention
     @SequenceGenerator(name = "products_id_seq", sequenceName = "products_id_seq", initialValue = 1, allocationSize = 1)

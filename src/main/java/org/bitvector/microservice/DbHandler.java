@@ -1,6 +1,5 @@
 package org.bitvector.microservice;
 
-
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
@@ -16,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
 
 public class DbHandler extends AbstractVerticle implements ProductDAO {
 
