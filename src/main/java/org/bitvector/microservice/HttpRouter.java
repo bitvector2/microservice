@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 
 public class HttpRouter extends AbstractVerticle {
@@ -50,16 +49,16 @@ public class HttpRouter extends AbstractVerticle {
 
 
     private void handleGetAllProducts(RoutingContext routingContext) {
-        DbMessage dbRequest = new DbMessage("getAllProducts", null);
+        DbMessage dbRequest = new DbMessage("getAllProducts");
 
         eb.send("DbProxy", dbRequest, reply -> {
             if (reply.succeeded()) {
                 DbMessage dbResponse = (DbMessage) reply.result().body();
 
-                if (dbResponse.succeeded()) {
+                if (dbResponse.getSuccess()) {
                     String jsonString = null;
                     try {
-                        jsonString = jsonMapper.writeValueAsString(dbResponse.getResults());
+                        jsonString = jsonMapper.writeValueAsString(dbResponse.getResult());
                     } catch (JsonProcessingException e) {
                         logger.error("Failed to convert Results to JSON", e);
                     }
@@ -76,19 +75,17 @@ public class HttpRouter extends AbstractVerticle {
     }
 
     private void handleGetProductById(RoutingContext routingContext) {
-        ArrayList<String> params = new ArrayList<>();
-        params.add(routingContext.request().getParam("productID"));
-
-        DbMessage dbRequest = new DbMessage("getProductById", params);
+        Integer id = Integer.parseInt(routingContext.request().getParam("productID"));
+        DbMessage dbRequest = new DbMessage("getProductById", id);
 
         eb.send("DbProxy", dbRequest, reply -> {
             if (reply.succeeded()) {
                 DbMessage dbResponse = (DbMessage) reply.result().body();
 
-                if (dbResponse.succeeded()) {
+                if (dbResponse.getSuccess()) {
                     String jsonString = null;
                     try {
-                        jsonString = jsonMapper.writeValueAsString(dbResponse.getResults());
+                        jsonString = jsonMapper.writeValueAsString(dbResponse.getResult());
                     } catch (JsonProcessingException e) {
                         logger.error("Failed to convert Results to JSON", e);
                     }
@@ -105,22 +102,20 @@ public class HttpRouter extends AbstractVerticle {
     }
 
     private void handlePutProductById(RoutingContext routingContext) {
-        ArrayList<Product> params = new ArrayList<>();
+        Product product = null;
         try {
-            Product product = jsonMapper.readValue(routingContext.getBodyAsString(), Product.class);
+            product = jsonMapper.readValue(routingContext.getBodyAsString(), Product.class);
             product.setId(Integer.parseInt(routingContext.request().getParam("productID")));
-            params.add(product);
         } catch (IOException e) {
             logger.error("Failed to convert payload to JSON", e);
         }
-
-        DbMessage dbRequest = new DbMessage("updateProduct", params);
+        DbMessage dbRequest = new DbMessage("updateProduct", product);
 
         eb.send("DbProxy", dbRequest, reply -> {
             if (reply.succeeded()) {
                 DbMessage dbResponse = (DbMessage) reply.result().body();
 
-                if (dbResponse.succeeded()) {
+                if (dbResponse.getSuccess()) {
                     routingContext.response()
                             .setStatusCode(200)
                             .end();
@@ -134,21 +129,19 @@ public class HttpRouter extends AbstractVerticle {
     }
 
     private void handlePostProduct(RoutingContext routingContext) {
-        ArrayList<Product> params = new ArrayList<>();
+        Product product = null;
         try {
-            Product product = jsonMapper.readValue(routingContext.getBodyAsString(), Product.class);
-            params.add(product);
+            product = jsonMapper.readValue(routingContext.getBodyAsString(), Product.class);
         } catch (IOException e) {
             logger.error("Failed to convert payload to JSON", e);
         }
-
-        DbMessage dbRequest = new DbMessage("addProduct", params);
+        DbMessage dbRequest = new DbMessage("addProduct", product);
 
         eb.send("DbProxy", dbRequest, reply -> {
             if (reply.succeeded()) {
                 DbMessage dbResponse = (DbMessage) reply.result().body();
 
-                if (dbResponse.succeeded()) {
+                if (dbResponse.getSuccess()) {
                     routingContext.response()
                             .setStatusCode(200)
                             .end();
@@ -162,21 +155,16 @@ public class HttpRouter extends AbstractVerticle {
     }
 
     private void handleDeleteProductById(RoutingContext routingContext) {
-        ArrayList<String> params1 = new ArrayList<>();
-        params1.add(routingContext.request().getParam("productID"));
-
-        DbMessage dbRequest1 = new DbMessage("getProductById", params1);
+        Integer id = Integer.parseInt(routingContext.request().getParam("productID"));
+        DbMessage dbRequest1 = new DbMessage("getProductById", id);
 
         eb.send("DbProxy", dbRequest1, reply1 -> {
             if (reply1.succeeded()) {
                 DbMessage dbResponse1 = (DbMessage) reply1.result().body();
 
-                if (dbResponse1.succeeded()) {
-                    Product product = (Product) dbResponse1.getResults().get(0);
-                    ArrayList<Product> params2 = new ArrayList<>();
-                    params2.add(product);
-
-                    DbMessage dbRequest2 = new DbMessage("deleteProduct", params2);
+                if (dbResponse1.getSuccess()) {
+                    Product product = (Product) dbResponse1.getResult();
+                    DbMessage dbRequest2 = new DbMessage("deleteProduct", product);
 
                     eb.send("DbProxy", dbRequest2, reply2 -> {
                         if (reply2.succeeded()) {

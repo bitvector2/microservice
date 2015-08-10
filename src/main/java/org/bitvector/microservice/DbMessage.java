@@ -2,45 +2,55 @@ package org.bitvector.microservice;
 
 import java.util.List;
 
+public class DbMessage {
+    private String action = null;
+    private Object param = null;
+    private Object result = null;
+    private Boolean success = null;
 
-public final class DbMessage {
-    private final String action;
-    private final List params;
-    private final List results;
-    private final Boolean success;
-
-    // Request constructor
-    DbMessage(String action, List params) {
-        assert (action != null);
+    // Product Request signatures
+    DbMessage(String action) {
         this.action = action;
-        this.params = params;
-        this.results = null;
-        this.success = null;
     }
 
-    // Response constructor
-    DbMessage(Boolean succeeded, List results) {
-        assert (succeeded != null);
-        this.action = null;
-        this.params = null;
-        this.results = results;
-        this.success = succeeded;
+    DbMessage(String action, Integer param) {
+        this.action = action;
+        this.param = param;
+    }
+
+    DbMessage(String action, Product param) {
+        this.action = action;
+        this.param = param;
+    }
+
+    // Product Response signatures
+    DbMessage(Boolean success) {
+        this.success = success;
+    }
+
+    DbMessage(Boolean success, Product result) {
+        this.success = success;
+        this.result = result;
+    }
+
+    DbMessage(Boolean success, List<Product> result) {
+        this.success = success;
+        this.result = result;
+    }
+
+    public Boolean getSuccess() {
+        return success;
+    }
+
+    public Object getResult() {
+        return result;
     }
 
     public String getAction() {
         return action;
     }
 
-    public List getParams() {
-        return params;
+    public Object getParam() {
+        return param;
     }
-
-    public List getResults() {
-        return results;
-    }
-
-    public Boolean succeeded() {
-        return success;
-    }
-
 }

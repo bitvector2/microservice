@@ -5,7 +5,7 @@ import java.util.List;
 // https://github.com/iluwatar/java-design-patterns/#dao
 
 public interface ProductDAO {
-    List getAllProducts();
+    List<Product> getAllProducts();
 
     Product getProductById(Integer id);
 

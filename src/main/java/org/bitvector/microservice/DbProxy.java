@@ -53,56 +53,56 @@ public class DbProxy extends AbstractVerticle implements ProductDAO {
     private void onMessage(Message<DbMessage> message) {
         switch (message.body().getAction()) {
             case "getAllProducts": {
-                List<Product> products = this.getAllProducts();
-                message.reply(new DbMessage(true, products));
+                message.reply(new DbMessage(true, this.getAllProducts()));
             }
             break;
             case "getProductById": {
-                Integer id = Integer.parseInt((String) message.body().getParams().get(0));
-                ArrayList<Product> products = new ArrayList<>();
-                products.add(this.getProductById(id));
-                message.reply(new DbMessage(true, products));
+                Integer id = (Integer) message.body().getParam();
+                message.reply(new DbMessage(true, this.getProductById(id)));
             }
             break;
             case "addProduct": {
-                Product product = (Product) message.body().getParams().get(0);
+                Product product = (Product) message.body().getParam();
                 this.addProduct(product);
-                message.reply(new DbMessage(true, null));
+                message.reply(new DbMessage(true));
             }
             break;
             case "updateProduct": {
-                Product product = (Product) message.body().getParams().get(0);
+                Product product = (Product) message.body().getParam();
                 this.updateProduct(product);
-                message.reply(new DbMessage(true, null));
+                message.reply(new DbMessage(true));
             }
             break;
             case "deleteProduct": {
-                Product product = (Product) message.body().getParams().get(0);
+                Product product = (Product) message.body().getParam();
                 this.deleteProduct(product);
-                message.reply(new DbMessage(true, null));
+                message.reply(new DbMessage(true));
             }
             break;
             default: {
                 logger.error("Received message with an unknown action.");
-                message.reply(new DbMessage(false, null));
+                message.reply(new DbMessage(false));
             }
             break;
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<Product> getAllProducts() {
         Session session = sessionFactory.openSession();
-        List products = session.createQuery("FROM Product")
+        List objs = session.createQuery("FROM Product")
                 .setCacheable(true)
                 .list();
         session.disconnect();
+
+        List<Product> products = new ArrayList<>();
+        for (Object obj : objs) {
+            products.add((Product) obj);
+        }
         return products;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Product getProductById(Integer id) {
         Session session = sessionFactory.openSession();
         List products = session.createQuery("FROM Product WHERE id=:id")
