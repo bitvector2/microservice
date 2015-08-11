@@ -3,8 +3,8 @@
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL9Dialect</property>
-        <property name="hibernate.cache.use_second_level_cache">true</property>
-        <property name="hibernate.cache.use_query_cache">true</property>
+        <property name="hibernate.cache.use_second_level_cache">false</property>
+        <property name="hibernate.cache.use_query_cache">false</property>
         <property name="hibernate.connection.provider_class">
             org.hibernate.hikaricp.internal.HikariCPConnectionProvider
         </property>
@@ -13,8 +13,8 @@
         <property name="hibernate.hikari.idleTimeout">30000</property>
         <property name="hibernate.hikari.dataSourceClassName">org.postgresql.ds.PGSimpleDataSource</property>
         <property name="hibernate.hikari.dataSource.url">
-            jdbc:postgresql://192.168.10.157/microservice
-            <!-- jdbc:postgresql://10.130.48.236/microservice -->
+            <!-- jdbc:postgresql://192.168.10.157/microservice -->
+            jdbc:postgresql://10.130.48.236/microservice
         </property>
         <property name="hibernate.hikari.dataSource.user">microservice</property>
         <property name="hibernate.hikari.dataSource.password">microservice</property>

@@ -40,4 +40,5 @@ dependencies {
     compile "org.slf4j:slf4j-api:1.7.12"
     testCompile "junit:junit:4.12"
     testCompile "com.jayway.restassured:rest-assured:2.5.0"
+    testCompile "org.postgresql:postgresql:9.4-1201-jdbc41"
 }
