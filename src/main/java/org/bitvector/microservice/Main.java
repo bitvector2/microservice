@@ -24,6 +24,7 @@ public class Main {
 
         // Start application
         Vertx vertx = Vertx.vertx();
+        vertx.deployVerticle("org.bitvector.microservice.IndexHandler", new DeploymentOptions().setWorker(true));
         vertx.deployVerticle("org.bitvector.microservice.DbHandler", new DeploymentOptions().setWorker(true));
         vertx.deployVerticle("org.bitvector.microservice.HttpHandler");
 
