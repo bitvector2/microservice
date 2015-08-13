@@ -1,6 +1,7 @@
 plugins {
     id "application"
-    id "com.github.johnrengelman.shadow" version "1.2.1"
+    id "com.github.johnrengelman.shadow" version "1.2.2" // https://github.com/johnrengelman/shadow
+    id "com.github.ben-manes.versions" version "0.11.3" // https://github.com/ben-manes/gradle-versions-plugin
 }
 
 group = "org.bitvector"
@@ -15,9 +16,9 @@ dependencies {
     compile "ch.qos.logback:logback-classic:1.1.3"
     compile "ch.qos.logback:logback-core:1.1.3"
     compile "io.dropwizard.metrics:metrics-core:3.1.2"
-    compile "com.fasterxml.jackson.core:jackson-annotations:2.6.0"
-    compile "com.fasterxml.jackson.core:jackson-core:2.6.0"
-    compile "com.fasterxml.jackson.core:jackson-databind:2.6.0"
+    compile "com.fasterxml.jackson.core:jackson-annotations:2.6.1"
+    compile "com.fasterxml.jackson.core:jackson-core:2.6.1"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.6.1"
     compile "com.google.guava:guava:18.0"
     compile "com.hazelcast:hazelcast:3.5.1"
     compile "com.hazelcast:hazelcast-hibernate4:3.5.1"
@@ -33,8 +34,8 @@ dependencies {
     compile "io.vertx:vertx-core:3.0.0"
     compile "io.vertx:vertx-web:3.0.0"
     compile "io.vertx:vertx-dropwizard-metrics:3.0.0"
-    compile "org.hibernate:hibernate-core:4.3.10.Final"
-    compile "org.hibernate:hibernate-hikaricp:4.3.10.Final"
+    compile "org.hibernate:hibernate-core:4.3.11.Final"
+    compile "org.hibernate:hibernate-hikaricp:4.3.11.Final"
     compile "org.javassist:javassist:3.20.0-GA"
     compile "org.postgresql:postgresql:9.4-1201-jdbc41"
     compile "org.slf4j:slf4j-api:1.7.12"

@@ -21,7 +21,6 @@ public class DbHandler extends AbstractVerticle implements ProductDAO {
     private Logger logger;
     private SessionFactory sessionFactory;
 
-
     @Override
     public void start() {
         logger = LoggerFactory.getLogger("org.bitvector.microservice.DbHandler");
@@ -60,7 +59,7 @@ public class DbHandler extends AbstractVerticle implements ProductDAO {
                 if (product == null) {
                     message.reply(new DbMessage(false));
                 } else {
-                    message.reply(new DbMessage(true, this.getProductById(id)));
+                    message.reply(new DbMessage(true, product));
                 }
             }
             break;
@@ -93,9 +92,11 @@ public class DbHandler extends AbstractVerticle implements ProductDAO {
     @Override
     public List<Product> getAllProducts() {
         Session session = sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
         List objs = session.createQuery("FROM Product")
                 .setCacheable(true)
                 .list();
+        tx.commit();
         session.disconnect();
 
         List<Product> products = new ArrayList<>();
@@ -108,15 +109,18 @@ public class DbHandler extends AbstractVerticle implements ProductDAO {
     @Override
     public Product getProductById(Integer id) {
         Session session = sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
         List products = session.createQuery("FROM Product WHERE id=:ID")
                 .setParameter("ID", id)
                 .setCacheable(true)
                 .list();
+        tx.commit();
         session.disconnect();
-        if (products.size() == 0) {
-            return null;
-        } else {
+
+        if (products.size() > 0) {
             return (Product) products.get(0);
+        } else {
+            return null;
         }
     }
 

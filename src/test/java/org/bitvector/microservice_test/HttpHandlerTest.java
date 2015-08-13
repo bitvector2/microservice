@@ -31,7 +31,7 @@ public class HttpHandlerTest {
 
         try {
             conn = DriverManager.getConnection(
-                    "jdbc:postgresql://10.130.48.236:5432/microservice",
+                    "jdbc:postgresql://192.168.10.157:5432/microservice",
                     "microservice",
                     "microservice"
             );
@@ -152,4 +152,5 @@ public class HttpHandlerTest {
         emptyProducts();
         when().delete("/products/1").then().statusCode(404);
     }
+
 }
