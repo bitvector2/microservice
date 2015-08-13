@@ -92,11 +92,9 @@ public class DbHandler extends AbstractVerticle implements ProductDAO {
     @Override
     public List<Product> getAllProducts() {
         Session session = sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
         List objs = session.createQuery("FROM Product")
                 .setCacheable(true)
                 .list();
-        tx.commit();
         session.disconnect();
 
         List<Product> products = new ArrayList<>();
@@ -109,12 +107,10 @@ public class DbHandler extends AbstractVerticle implements ProductDAO {
     @Override
     public Product getProductById(Integer id) {
         Session session = sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
         List products = session.createQuery("FROM Product WHERE id=:ID")
                 .setParameter("ID", id)
                 .setCacheable(true)
                 .list();
-        tx.commit();
         session.disconnect();
 
         if (products.size() > 0) {
