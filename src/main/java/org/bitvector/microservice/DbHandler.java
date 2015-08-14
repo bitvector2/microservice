@@ -50,9 +50,10 @@ public class DbHandler extends AbstractVerticle implements ProductDAO {
     private void onMessage(Message<DbMessage> message) {
         switch (message.body().getAction()) {
             case "getAllProducts": {
-                message.reply(new DbMessage(true, this.getAllProducts()));
+                List<Product> products = this.getAllProducts();
+                message.reply(new DbMessage(true, products));
+                break;
             }
-            break;
             case "getProductById": {
                 Integer id = (Integer) message.body().getParam();
                 Product product = this.getProductById(id);
@@ -61,31 +62,31 @@ public class DbHandler extends AbstractVerticle implements ProductDAO {
                 } else {
                     message.reply(new DbMessage(true, product));
                 }
+                break;
             }
-            break;
             case "addProduct": {
                 Product product = (Product) message.body().getParam();
                 this.addProduct(product);
                 message.reply(new DbMessage(true));
+                break;
             }
-            break;
             case "updateProduct": {
                 Product product = (Product) message.body().getParam();
                 this.updateProduct(product);
                 message.reply(new DbMessage(true));
+                break;
             }
-            break;
             case "deleteProduct": {
                 Product product = (Product) message.body().getParam();
                 this.deleteProduct(product);
                 message.reply(new DbMessage(true));
+                break;
             }
-            break;
             default: {
                 logger.error("Received message with an unknown action.");
                 message.reply(new DbMessage(false));
+                break;
             }
-            break;
         }
     }
 

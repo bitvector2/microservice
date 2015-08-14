@@ -39,6 +39,7 @@ dependencies {
     compile "org.javassist:javassist:3.20.0-GA"
     compile "org.postgresql:postgresql:9.4-1201-jdbc41"
     compile "org.slf4j:slf4j-api:1.7.12"
+    compile "org.elasticsearch:elasticsearch:1.7.1"
     testCompile "junit:junit:4.12"
     testCompile "com.jayway.restassured:rest-assured:2.5.0"
     testCompile "org.postgresql:postgresql:9.4-1201-jdbc41"
